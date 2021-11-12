@@ -2,7 +2,7 @@ version: '3'
 
 services:
   misp:
-    image: registry.gitlab.ost.ch:45023/misp/misp-image:latest
+    build: misp
     container_name: misp
     restart: unless-stopped
     depends_on:
