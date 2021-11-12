@@ -13,6 +13,8 @@ RUN apt-get update && \
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update && apt-get -y install python3.9 python3-pip
 RUN pip3 install --upgrade pip
+RUN pip install pymisp
+
 
 # set language
 RUN locale-gen en_US.UTF-8
@@ -75,6 +77,10 @@ RUN chmod 0755 /run.sh && touch /.firstboot.tmp
 # Make a backup of /var/www/MISP to restore it to the local moint point at first boot
 WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
+
+# Configuration script
+ADD configuration.py /configuration.py
+RUN chmod 0755 /configuration.py
 
 VOLUME /var/www/MISP
 EXPOSE 80
