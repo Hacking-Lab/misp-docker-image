@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  misp:
+    image: registry.gitlab.ost.ch:45023/misp/misp-image:latest
+    container_name: misp
+    restart: unless-stopped
+    depends_on:
+      - database
+    ports: 
+      - "80:80"
+      - "443:443"
+    volumes:
+      # - /dev/urandom:/dev/random
+      - ./data/misp:/var/www/MISP:rw
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
+      - MISP_BASEURL=${MISP_BASEURL}
+      - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
+      - TIMEZONE=${TIMEZONE}
+
+  database:
+    image: mysql/mysql-server:5.7
+    container_name: database
+    restart: unless-stopped
+    volumes:
+      - ./data/database:/var/lib/mysql:rw
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
