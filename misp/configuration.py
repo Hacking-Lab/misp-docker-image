@@ -6,9 +6,9 @@ import time
 import subprocess
 import uuid
 
-misp_url = "http://172.16.137.132/"
-#misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
-misp_key = "wK4t1jDRa9u9OKEz2TOPtvGv8t9i93vCbxEB3MCp"
+misp_url = "http://localhost/"
+misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
+#misp_key = "wK4t1jDRa9u9OKEz2TOPtvGv8t9i93vCbxEB3MCp"
 misp_verifycert = False
 
 default_nickname = "investigator"
