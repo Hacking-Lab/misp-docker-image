@@ -1,6 +1,5 @@
 
 import json
-from os import execlp, path
 from pymisp import ExpandedPyMISP, MISPUser, MISPServer, PyMISP, MISPOrganisation, MISPEvent
 import time
 import subprocess
@@ -75,7 +74,7 @@ def importEvents():
 
         # open json file with events
         try:
-            with open (current_lab + '.json', 'r') as f:
+            with open ('/' + current_lab + '.json', 'r') as f:
                 for e in f:
                     events = json.loads(e)
                 print('found file ' + current_lab)
@@ -109,6 +108,7 @@ def importEvents():
             print(misp.add_event(events['response'][event]))
 
 
+time.sleep(10)
 setServerSettings()
 createOrg()
 createUsers()
