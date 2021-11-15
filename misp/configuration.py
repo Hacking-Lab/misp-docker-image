@@ -3,7 +3,6 @@ import json
 from pymisp import ExpandedPyMISP, MISPUser, MISPServer, PyMISP, MISPOrganisation, MISPEvent
 import time
 import subprocess
-import uuid
 import os
 
 time.sleep(10)
@@ -111,7 +110,7 @@ def importEvents():
             print(misp.add_event(events['response'][event]))
 
 
-os.system(cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png)
+os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
 
 misp.update_object_templates()
 
