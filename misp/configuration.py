@@ -113,6 +113,8 @@ def importEvents():
 
 os.system(cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png)
 
+misp.update_object_templates()
+
 setServerSettings()
 createOrg()
 createUsers()
