@@ -12,5 +12,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker:$(date +%s)
+    
+    - name: Build container image
+      # run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker:$(date +%s) --tag misp-docker:latest
+      run: cd ./misp/ && docker build . --file Dockerfile --tag $IMAGE_NAME
+    
+    - name: Log into github container registry
+      run: echo "${{ secrets.GITHUB_TOKEN }} | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: push image go github container registry
+      run: | 
+        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:${{ github.run_id }}
+        docker push $IMAGE_ID
+      
