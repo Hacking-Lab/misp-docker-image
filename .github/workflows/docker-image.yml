@@ -20,8 +20,9 @@ jobs:
     - name: Log into github container registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
       
-    - name: push image go github container registry
-      run: | 
-        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/test:${{ github.run_id }}
-        docker push test
+    - name: push image to github container registry
+      run: IMAGE_ID=ghcr.io/${{ github.repository_owner }}/test:${{ github.run_id }} && docker push $IMAGE_ID
+#        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/test:${{ github.run_id }}
+        
+
       
