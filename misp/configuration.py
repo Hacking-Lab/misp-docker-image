@@ -4,6 +4,7 @@ from pymisp import ExpandedPyMISP, MISPUser, MISPServer, PyMISP, MISPOrganisatio
 import time
 import subprocess
 import uuid
+import os
 
 time.sleep(10)
 
@@ -109,6 +110,8 @@ def importEvents():
     # upload file
             print(misp.add_event(events['response'][event]))
 
+
+os.system(cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png)
 
 setServerSettings()
 createOrg()
