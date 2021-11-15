@@ -18,7 +18,7 @@ jobs:
       run: cd ./misp/ && docker build . --file Dockerfile --tag test
     
     - name: Log into github container registry
-      run: echo "${{ secrets.GITHUB_TOKEN }} | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
       
     - name: push image go github container registry
       run: | 
