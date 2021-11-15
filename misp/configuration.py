@@ -5,6 +5,8 @@ import time
 import subprocess
 import uuid
 
+time.sleep(10)
+
 misp_url = "http://localhost/"
 misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
 #misp_key = "wK4t1jDRa9u9OKEz2TOPtvGv8t9i93vCbxEB3MCp"
@@ -108,7 +110,6 @@ def importEvents():
             print(misp.add_event(events['response'][event]))
 
 
-time.sleep(10)
 setServerSettings()
 createOrg()
 createUsers()

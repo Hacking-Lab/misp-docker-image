@@ -79,7 +79,8 @@ WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
 
 # Add logo
-COPY logo.png /logo.png /var/www/MISP/app/webroot/img/custom/logo.png
+COPY logo.png /logo.png
+RUN mv /logo.png /var/www/MISP/app/webroot/img/custom/logo.png
 
 # Add Lab config
 COPY --chown=misp:misp Lab_* /
