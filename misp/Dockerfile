@@ -80,7 +80,7 @@ RUN tar czpf /root/MISP.tgz .
 
 # Add logo
 COPY logo.png /logo.png
-
+RUN chmod 0777 /logo.png
 # Add Lab config
 COPY --chown=misp:misp Lab_* /
 RUN chmod 0755 /Lab_*
