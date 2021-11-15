@@ -80,7 +80,7 @@ def importEvents():
                     events = json.loads(e)
                 print('found file ' + current_lab)
         except:
-            print('cant find file')
+            print('cant find file' + current_lab)
             continue
 
         # find correct lab org uuid
