@@ -15,7 +15,7 @@ jobs:
     
     - name: Build container image
       # run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker:$(date +%s) --tag misp-docker:latest
-      run: cd ./misp/ && docker build . --file Dockerfile --tag test
+      run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker-image
     
     - name: Log into github container registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
