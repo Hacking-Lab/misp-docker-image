@@ -22,15 +22,18 @@ def getVitalSigns():
 
 def getKey():
     global misp_key
-    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
+    #misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
+    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey admin@admin.test | sed '1d'")
     print("Your MISP admin key is: " + misp_key)
 
-def getInstance(misp_key):
+def getInstance():
     global misp 
+    print("Instance got MISP key:" + misp_key)
     misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 # Setup server
 def setServerSettings():
+    print("Started Server Settings")
     misp.set_server_setting("Security.password_policy_length", 7, True)
     misp.set_server_setting("Security.password_policy_complexity", "/(a-z)*/", True)
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
