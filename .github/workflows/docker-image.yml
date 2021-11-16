@@ -16,7 +16,7 @@ jobs:
         DOCKER_USER: janiswolfost
         DOCKER_HUB_TOKEN: 466fb3a5-549a-4324-91e7-52225e30363e
         
-      run : docker login -u $DOCKER_USER - p $DOCKER_HUB_TOKEN
+      run : docker login -u $DOCKER_USER -p $DOCKER_HUB_TOKEN
       
     - name: Build docker image
       run: docker build ./misp/. --file Dockerfile --tag hl/misp-docker-image:$(date +%s)
