@@ -35,6 +35,10 @@ def getInstance(misp_key):
     misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 # Setup server
+def updateInstance():
+    misp.update_object_templates()
+    misp.update_galaxies()
+
 def setServerSettings():
     print("Started Server Settings")
     misp.set_server_setting("Security.password_policy_length", 7, True)
@@ -125,7 +129,6 @@ while x:
         getVitalSigns()
         misp_key = getKey('admin@admin.test')
         getInstance(misp_key)
-        misp.update_object_templates()
         x = False
     except KeyboardInterrupt:
         break
@@ -134,6 +137,7 @@ while x:
 
 print("MISP instance is running, init lab env")
 time.sleep(5)
+updateInstance()
 setServerSettings()
 createOrg()
 createLabUsers()
