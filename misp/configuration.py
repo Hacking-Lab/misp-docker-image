@@ -17,13 +17,13 @@ def getVitalSigns():
     print("vital")
     r = requests.get('http://172.16.137.132/users/login')
     print("MISP Status Code " + str(r.status_code))
-    print("MISP Reply" + r.text)
+    #print("MISP Reply" + r.text)
 
 
 def getKey():
     global misp_key
-    #misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
-    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey admin@admin.test | sed '1d'")
+    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey admin@admin.test | cut -d ':' -f 2 | cut -d ' ' -f 2")
+    #misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey admin@admin.test | sed '1d'")
     print("Your MISP admin key is: " + misp_key)
 
 def getInstance():
@@ -106,6 +106,7 @@ while x:
         time.sleep(10)
         getVitalSigns()
         getKey()
+        getInstance()
         misp.update_object_templates()
         x = False
     except KeyboardInterrupt:
