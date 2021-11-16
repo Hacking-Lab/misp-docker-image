@@ -39,6 +39,7 @@ def updateInstance():
     misp.update_object_templates()
     misp.update_galaxies()
     misp.update_taxonomies()
+    misp.enable_taxonomy('tlp')
 
 def setServerSettings():
     print("Started Server Settings")
