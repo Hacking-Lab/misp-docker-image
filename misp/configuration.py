@@ -114,8 +114,10 @@ while x:
     except:
         x = True
 
+print("MISP instance is running, init lab env")
+time.sleep(5)
 setServerSettings()
 createOrg()
 createUsers()
 importEvents()
-#os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
+os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
