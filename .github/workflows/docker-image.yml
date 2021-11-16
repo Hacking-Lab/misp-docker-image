@@ -1,28 +1,26 @@
-name: Docker Image CI
+
+name: Build and Push to Docker Hub
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Build container image
-      # run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker:$(date +%s) --tag misp-docker:latest
-      run: cd ./misp/ && docker build . --file Dockerfile --tag misp-docker-image
-    
-    - name: Log into github container registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
-      
-    - name: push image to github container registry
-      run: IMAGE_ID=ghcr.io/jw4949/misp-docker-image:${{ github.run_id }} && docker push $IMAGE_ID
-#        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/test:${{ github.run_id }}
+    - name: docker login
+      env:
+        DOCKER_USER: janiswolfost
+        DOCKER_HUB_TOKEN: 466fb3a5-549a-4324-91e7-52225e30363e
         
-
+      run : docker login -u $DOCKER_USER -p $DOCKER_HUB_TOKEN
       
+    - name: Build docker image
+      run: docker build . --file misp/Dockerfile --tag hl/misp-docker-image:$(date +%s)
+      
+    - name: Docker push
+      run: docker push janiswolfost/hl
+
