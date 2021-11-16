@@ -1,4 +1,3 @@
-
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
@@ -35,5 +34,6 @@ jobs:
         with:
           context: ./misp/.
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          #tags: ${{ steps.meta.outputs.tags }}
+          tags: janiswolfost/misp:latest, janiswolfost/misp:$(date +%s)
           labels: ${{ steps.meta.outputs.labels }}
