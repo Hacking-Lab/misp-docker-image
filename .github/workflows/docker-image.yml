@@ -19,7 +19,7 @@ jobs:
       run : docker login -u $DOCKER_USER -p $DOCKER_HUB_TOKEN
       
     - name: Build docker image
-      run: docker build ./misp/. --file Dockerfile --tag hl/misp-docker-image:$(date +%s)
+      run: docker build . --file misp/Dockerfile --tag hl/misp-docker-image:$(date +%s)
       
     - name: Docker push
       run: docker push janiswolfost/hl
