@@ -4,20 +4,30 @@ from pymisp import ExpandedPyMISP, MISPUser, MISPServer, PyMISP, MISPOrganisatio
 import time
 import subprocess
 import os
-
-time.sleep(10)
+import requests
 
 misp_url = "http://localhost/"
-misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
-#misp_key = "wK4t1jDRa9u9OKEz2TOPtvGv8t9i93vCbxEB3MCp"
 misp_verifycert = False
 
 default_nickname = "investigator"
 default_pw = "compass"
 labs_count = 10
 
-misp = PyMISP(misp_url, misp_key, misp_verifycert)
+def getVitalSigns():
+    print("vital")
+    r = requests.get('http://172.16.137.132/users/login')
+    print("MISP Status Code " + str(r.status_code))
+    print("MISP Reply" + r.text)
 
+
+def getKey():
+    global misp_key
+    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey 1 | cut -d ':' -f 2 | cut -d ' ' -f 2")
+    print("Your MISP admin key is: " + misp_key)
+
+def getInstance(misp_key):
+    global misp 
+    misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 # Setup server
 def setServerSettings():
@@ -35,7 +45,6 @@ def createOrg():
         org.local = True
         misp.add_organisation(org, pythonify=True)
 
-
 # Create users
 def createUsers():
     for i in range(labs_count):
@@ -46,28 +55,6 @@ def createUsers():
         user.password ="compass"
         user.change_pw = 0
         misp.add_user(user, pythonify=True)
-
-def createUser():
-    user = MISPUser()
-    user.email = default_nickname + '@misp-lab99.com'
-    user.org_id = 3 #offset -> org 1 = admin org
-    user.role_id = 3
-    user.password ="compass"
-    user.change_pw = 0
-    print(misp.add_user(user, pythonify=True))
-
-# import MISP events from export File
-def importEventsFromFile(path):
-    with open(path, 'r') as f:
-        for e in f:
-            event = json.loads(e)
-    
-    for i in range(len(event['response'])):
-        event['response'][i]['Event']['uuid'] = ""
-        event['response'][i]['Event']['Attribute'][0]['uuid'] = ""
-        misp.add_event(event['response'][i])
-
-
 
 # import events for every lab
 def importEvents():
@@ -110,12 +97,21 @@ def importEvents():
             print(misp.add_event(events['response'][event]))
 
 
-os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
-
-misp.update_object_templates()
+x = True
+while x:
+    try:
+        time.sleep(10)
+        getVitalSigns()
+        getKey()
+        misp.update_object_templates()
+        x = False
+    except KeyboardInterrupt:
+        break
+    except:
+        x = True
 
 setServerSettings()
 createOrg()
 createUsers()
 importEvents()
-# createUser()
+#os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
