@@ -38,6 +38,7 @@ def getInstance(misp_key):
 def updateInstance():
     misp.update_object_templates()
     misp.update_galaxies()
+    misp.update_taxonomies()
 
 def setServerSettings():
     print("Started Server Settings")
