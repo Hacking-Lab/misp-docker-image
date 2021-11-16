@@ -22,8 +22,8 @@ def getVitalSigns():
 
 def getKey():
     global misp_key
+    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey admin@admin.test | sed '1d'")
     misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey admin@admin.test | cut -d ':' -f 2 | cut -d ' ' -f 2")
-    #misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey admin@admin.test | sed '1d'")
     print("Your MISP admin key is: " + misp_key)
 
 def getInstance():
