@@ -35,5 +35,5 @@ jobs:
           context: ./misp/.
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: janiswolfost/misp:latest, janiswolfost/misp:$(date +%s)
+          tags: janiswolfost/misp:latest
           labels: ${{ steps.meta.outputs.labels }}
