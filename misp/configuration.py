@@ -159,6 +159,7 @@ importEvents(lab=5, apiKey=getKey(email=admin_nickname + '@misp-lab5.com'))
 createOrg(orgname='lab6-org-A')
 createUser(email=admin_nickname + '@site1.misp-lab6.com', orgId=7, role=2, password=default_pw)
 createUser(email=default_nickname + '@site1.misp-lab6.com', orgId=7, role=3, password=default_pw)
+createUser(email='publisher@site1.misp-lab6.com', orgId=7, role=4, password=default_pw)
 importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@site1.misp-lab6.com'))
 
 # Lab 7 (Sharing Correlation)
