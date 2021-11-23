@@ -2,7 +2,7 @@ version: '3'
 
 services:
   misp:
-    build: misp
+    image: hackinglab/misp
     container_name: misp
     restart: unless-stopped
     depends_on:
