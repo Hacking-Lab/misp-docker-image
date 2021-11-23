@@ -1,9 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Publish Docker image
+name: Build and publish Docker image to hub.docker.com
 
 on:
   push:
@@ -17,16 +12,10 @@ env:
   #dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
 
 jobs:
-  push_to_registry:
+  build_and_push_to_dockerhub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-
-      - name: Check out repo        
-        uses: actions/checkout@v2
-      - run: echo " Print a single environment variable (the commit SHA ) - ${{ github.sha }} "
-      - run: echo "Print all environment variables"
-      - run:  env
     
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -48,6 +37,5 @@ jobs:
         with:
           context: ./misp/.
           push: true
-          #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:${{ github.JOB }}
+          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
           labels: ${{ steps.meta.outputs.labels }}
