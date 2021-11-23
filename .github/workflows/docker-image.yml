@@ -6,7 +6,7 @@ on:
 
 env:
   dockerhub_image_name: misp
-  #dockerhub_username: janiswolfost
+  dockerhub_repository_name: hackinglab
   dockerhub_username: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_USERNAME }}
   dockerhub_token: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_API_KEY }}
 
@@ -36,5 +36,5 @@ jobs:
         with:
           context: ./misp/.
           push: true
-          tags: hackinglab/${{ env.dockerhub_image_name }}:latest,hackinglab/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
+          tags: ${{ env.dockerhub_repository_name }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_repository_name }}/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
           labels: ${{ steps.meta.outputs.labels }}
