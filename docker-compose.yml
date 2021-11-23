@@ -1,33 +1,61 @@
 version: '3'
 
 services:
-  misp:
-    build: misp
-    container_name: misp
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    networks:
+      - external
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+
+  misp-instance-A:
+    image: hackinglab/misp
+    container_name: misp-instance-A
     restart: unless-stopped
     depends_on:
-      - database
+      - database-instance-A
+    networks:
+      - external
+      - internal-instance-A
     ports: 
-      - "80:80"
-      - "443:443"
+      - "8000:80"
     volumes:
-      # - /dev/urandom:/dev/random
       - ./data/misp:/var/www/MISP:rw
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_HOST=database-instance-A
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=${MISP_BASEURL}
+      - MISP_BASEURL=misp.localhost
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.misp.rule=Host(`misp.localhost`)"
+      - "traefik.http.routers.misp.service=misp"
+      - "traefik.http.services.misp.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.testHeader.headers.customrequestheaders.
 
-  database:
+
+  database-instance-A:
     image: mysql/mysql-server:5.7
-    container_name: database
+    container_name: database-instance-A
     restart: unless-stopped
+    networks:
+      - internal-instance-A
     volumes:
       - ./data/database:/var/lib/mysql:rw
     environment:
@@ -35,3 +63,12 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
+networks:
+  external:
+    name: external-network
+    driver: bridge
+  internal-instance-A:
+    name: internal-instance-A
+    driver: bridge
+    internal: true
