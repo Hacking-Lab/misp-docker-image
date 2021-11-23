@@ -33,4 +33,6 @@ Then login with the following credentials.
 User: `investigator@misp-labX.com`  
 Password: `compass`  
 
+_The **X** in the email address has to be replaced with the lab number (for example **1**)_.
+
 
