@@ -1,39 +1,40 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Publish Docker image
+name: Build and publish Docker image to hub.docker.com
 
 on:
   push:
     branches: [main]
 
+env:
+  dockerhub_image_name: misp
+  dockerhub_repository_name: hackinglab
+  dockerhub_username: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_USERNAME }}
+  dockerhub_token: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_API_KEY }}
+
 jobs:
-  push_to_registry:
+  build_and_push_to_dockerhub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
+    
       - name: Check out the repo
         uses: actions/checkout@v2
       
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          username: janiswolfost
-          password: 466fb3a5-549a-4324-91e7-52225e30363e
+          username: ${{ env.dockerhub_username }}
+          password: ${{ env.dockerhub_token }}
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: janiswolfost/misp-hl
+          images: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./misp/.
           push: true
-          #tags: ${{ steps.meta.outputs.tags }}
-          tags: janiswolfost/misp:latest
+          tags: ${{ env.dockerhub_repository_name }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_repository_name }}/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
           labels: ${{ steps.meta.outputs.labels }}
