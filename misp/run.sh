@@ -100,12 +100,7 @@ if [ -r /.firstboot.tmp ]; then
         sed -i "s/db\s*password/$MYSQL_PASSWORD/" database.php
 
         # Fix the base url
-        if [ -z "$MISP_BASEURL" ]; then
-                echo "No base URL defined, don't forget to define it manually!"
-        else
-                echo "Fixing the MISP base URL ($MISP_BASEURL) ..."
-                sed -i "s@'baseurl'[\t ]*=>[\t ]*'',@'baseurl' => '$MISP_BASEURL',@g" /var/www/MISP/app/Config/config.php
-        fi
+        /var/www/MISP/app/Console/cake Baseurl $MISP_BASEURL
 		
 		#Redis should not run as a daemon
 		sed -i "s/daemonize yes/daemonize no/g" /etc/redis/redis.conf
