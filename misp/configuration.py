@@ -135,49 +135,70 @@ setServerSettings()
 #################### LAB CONFIGURATION ####################
 
 # Lab 1 (Introduction)
-createOrg(orgname='lab1')
-createUser(email=default_nickname + '@misp-lab1.com', orgId=2, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab1')
+    createUser(email=default_nickname + '@misp-lab1.com', orgId=2, role=3, password=default_pw)
 
 # Lab 2 (Phishing)
-createOrg(orgname='lab2')
-createUser(email=default_nickname + '@misp-lab2.com', orgId=3, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab2')
+    createUser(email=default_nickname + '@misp-lab2.com', orgId=3, role=3, password=default_pw)
 
 # Lab 3 (Sandbox)
-createOrg(orgname='lab3')
-createUser(email=default_nickname + '@misp-lab3.com', orgId=4, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab3')
+    createUser(email=default_nickname + '@misp-lab3.com', orgId=4, role=3, password=default_pw)
 
 # Lab 4 (API)
-createOrg(orgname='lab4')
-createUser(email=default_nickname + '@misp-lab4.com', orgId=5, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab4')
+    createUser(email=default_nickname + '@misp-lab4.com', orgId=5, role=3, password=default_pw)
 
 # Lab 5 (MITRE ATT&CK)
-createOrg(orgname='lab5')
-createUser(email=admin_nickname + '@misp-lab5.com', orgId=6, role=2, password=default_pw)
-createUser(email=default_nickname + '@misp-lab5.com', orgId=6, role=3, password=default_pw)
-importEvents(lab=5, apiKey=getKey(email=admin_nickname + '@misp-lab5.com'))
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab5')
+    createUser(email=admin_nickname + '@misp-lab5.com', orgId=6, role=2, password=default_pw)
+    createUser(email=default_nickname + '@misp-lab5.com', orgId=6, role=3, password=default_pw)
+    importEvents(lab=5, apiKey=getKey(email=admin_nickname + '@misp-lab5.com'))
 
 # Lab 6 (Organization Sync)
-createOrg(orgname='lab6-org-A')
-createUser(email=admin_nickname + '@siteA.misp-lab6.com', orgId=7, role=2, password=default_pw)
-createUser(email=default_nickname + '@siteA.misp-lab6.com', orgId=7, role=3, password=default_pw)
-createUser(email='publisher@siteA.misp-lab6.com', orgId=7, role=4, password=default_pw)
-importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@siteA.misp-lab6.com'))
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab6-org-A')
+    createUser(email=admin_nickname + '@instance-a.misp-lab6.com', orgId=7, role=2, password=default_pw)
+    createUser(email=default_nickname + '@instance-a.misp-lab6.com', orgId=7, role=3, password=default_pw)
+    createUser(email='publisher@instance-a.misp-lab6.com', orgId=7, role=4, password=default_pw)
+    importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@instance-a.misp-lab6.com'))
+
+if os.environ['MISP_BASEURL'] == "http://instance-b.misp.localhost":
+    createOrg(orgname='lab6-org-F')
+    createUser(email=admin_nickname + '@instance-b.misp-lab6.com', orgId=7, role=2, password=default_pw)
+    createUser(email=default_nickname + '@instance-b.misp-lab6.com', orgId=7, role=3, password=default_pw)
+    createUser(email='publisher@instance-b.misp-lab6.com', orgId=7, role=4, password=default_pw)
+
+if os.environ['MISP_BASEURL'] == "http://instance-c.misp.localhost":
+    createOrg(orgname='lab6-org-E')
+    createUser(email=admin_nickname + '@instance-c.misp-lab6.com', orgId=7, role=2, password=default_pw)
+    createUser(email=default_nickname + '@instance-c.misp-lab6.com', orgId=7, role=3, password=default_pw)
+    createUser(email='publisher@instance-c.misp-lab6.com', orgId=7, role=4, password=default_pw)
 
 # Lab 7 (Sharing Correlation)
-createOrg(orgname='lab7')
-createUser(email=default_nickname + '@misp-lab7.com', orgId=8, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab7')
+    createUser(email=default_nickname + '@misp-lab7.com', orgId=8, role=3, password=default_pw)
 
 # Lab 8 (IDS / Snort)
-createOrg(orgname='lab8')
-createUser(email=default_nickname + '@misp-lab8.com', orgId=9, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab8')
+    createUser(email=default_nickname + '@misp-lab8.com', orgId=9, role=3, password=default_pw)
 
 # Lab 9 (Modules)
-createOrg(orgname='lab9')
-createUser(email=default_nickname + '@misp-lab9.com', orgId=10, role=3, password=default_pw)
+if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
+    createOrg(orgname='lab9')
+    createUser(email=default_nickname + '@misp-lab9.com', orgId=10, role=3, password=default_pw)
 
-# Site Admin
-createOrg(orgname='site-admin')
-createUser(email='site-admin@misp-lab.com', orgId=11, role=1, password=default_pw)
+# Instance Admin
+createOrg(orgname='instance-admin')
+createUser(email='instance-admin@misp-lab.com', orgId=11, role=1, password=default_pw)
 
 #################### LAB CONFIGURATION ####################
 
