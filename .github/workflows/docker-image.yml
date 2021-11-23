@@ -9,6 +9,13 @@ on:
   push:
     branches: [main]
 
+env:
+  dockerhub_image_name: misp
+  dockerhub_username: janiswolfost
+  dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+  #dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -20,14 +27,14 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          username: janiswolfost
+          username: ${{ env.dockerhub_username }}
           password: 466fb3a5-549a-4324-91e7-52225e30363e
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: janiswolfost/misp-hl
+          images: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -35,5 +42,5 @@ jobs:
           context: ./misp/.
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: janiswolfost/misp:latest
+          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest
           labels: ${{ steps.meta.outputs.labels }}
