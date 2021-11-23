@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     apt-get install -y postfix && \
     apt-get install -y mysql-client curl gcc git gnupg-agent \
-    make openssl redis-server sudo vim zip locales wget iproute2 supervisor cron
+    make openssl redis-server sudo vim zip locales wget iproute2 supervisor cron iputils-ping
 
 # install python
 RUN add-apt-repository ppa:deadsnakes/ppa
