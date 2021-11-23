@@ -42,5 +42,5 @@ jobs:
           context: ./misp/.
           push: true
           #tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:{{ $github.run_id }}
+          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:${{ github.run_id }}
           labels: ${{ steps.meta.outputs.labels }}
