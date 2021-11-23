@@ -6,10 +6,9 @@ on:
 
 env:
   dockerhub_image_name: misp
-  dockerhub_username: janiswolfost
-  dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
-  #dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+  #dockerhub_username: janiswolfost
+  dockerhub_username: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_USERNAME }}
+  dockerhub_token: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_API_KEY }}
 
 jobs:
   build_and_push_to_dockerhub:
@@ -24,7 +23,7 @@ jobs:
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
           username: ${{ env.dockerhub_username }}
-          password: 466fb3a5-549a-4324-91e7-52225e30363e
+          password: ${{ env.dockerhub_token }}
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -37,5 +36,5 @@ jobs:
         with:
           context: ./misp/.
           push: true
-          tags: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:latest,${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
+          tags: hackinglab/${{ env.dockerhub_image_name }}:latest,hackinglab/${{ env.dockerhub_image_name }}:${{ github.RUN_NUMBER }}
           labels: ${{ steps.meta.outputs.labels }}
