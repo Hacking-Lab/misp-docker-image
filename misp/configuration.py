@@ -34,13 +34,14 @@ def updateInstance():
     misp.update_object_templates()
     misp.update_galaxies()
     misp.update_taxonomies()
-    misp.enable_taxonomy('tlp')
+    #misp.enable_taxonomy('tlp')
 
 def setServerSettings():
     misp.set_server_setting("Security.password_policy_length", 7, True)
     misp.set_server_setting("Security.password_policy_complexity", "/(a-z)*/", True)
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
     misp.set_server_setting("MISP.welcome_text_top","Welcome to Malware Information Sharing Platform " ,True)
+    #set event attribute sharing type
 
 # Create organizations
 def createOrg(orgname):
@@ -157,10 +158,10 @@ importEvents(lab=5, apiKey=getKey(email=admin_nickname + '@misp-lab5.com'))
 
 # Lab 6 (Organization Sync)
 createOrg(orgname='lab6-org-A')
-createUser(email=admin_nickname + '@site1.misp-lab6.com', orgId=7, role=2, password=default_pw)
-createUser(email=default_nickname + '@site1.misp-lab6.com', orgId=7, role=3, password=default_pw)
-createUser(email='publisher@site1.misp-lab6.com', orgId=7, role=4, password=default_pw)
-importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@site1.misp-lab6.com'))
+createUser(email=admin_nickname + '@siteA.misp-lab6.com', orgId=7, role=2, password=default_pw)
+createUser(email=default_nickname + '@siteA.misp-lab6.com', orgId=7, role=3, password=default_pw)
+createUser(email='publisher@siteA.misp-lab6.com', orgId=7, role=4, password=default_pw)
+importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@siteA.misp-lab6.com'))
 
 # Lab 7 (Sharing Correlation)
 createOrg(orgname='lab7')
@@ -180,5 +181,5 @@ createUser(email='site-admin@misp-lab.com', orgId=11, role=1, password=default_p
 
 #################### LAB CONFIGURATION ####################
 
-cleanup()
+#cleanup()
 os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
