@@ -22,7 +22,6 @@ services:
   misp-instance-A:
     image: hackinglab/misp
     container_name: misp-instance-A
-
     restart: unless-stopped
     depends_on:
       - database-instance-A
@@ -30,9 +29,9 @@ services:
       - external
       - internal-instance-A
     ports: 
-      - "8000:80"
+      - "10000:80"
     volumes:
-      - ./data/misp:/var/www/MISP:rw
+      - ./data-instance-A/misp:/var/www/MISP:rw
     environment:
       - MYSQL_HOST=database-instance-A
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -40,16 +39,72 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=misp.localhost
+      - MISP_BASEURL=http://instance-a.misp.localhost
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp.rule=Host(`misp.localhost`)"
-      - "traefik.http.routers.misp.service=misp"
-      - "traefik.http.services.misp.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.testHeader.headers.customrequestheaders.
+      - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
+      - "traefik.http.routers.misp-a.service=misp-instance-A"
+      - "traefik.http.services.misp-a.loadbalancer.server.port=80"
 
+  misp-instance-B:
+    image: hackinglab/misp
+    container_name: misp-instance-B
+    restart: unless-stopped
+    depends_on:
+      - database-instance-B
+    networks:
+      - external
+      - internal-instance-B
+    ports: 
+      - "11000:80"
+    volumes:
+      - ./data-instance-B/misp:/var/www/MISP:rw
+    environment:
+      - MYSQL_HOST=database-instance-B
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
+      - MISP_BASEURL=http://instance-b.misp.localhost
+      - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
+      - TIMEZONE=${TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
+      - "traefik.http.routers.misp-b.service=misp-instance-B"
+      - "traefik.http.services.misp-b.loadbalancer.server.port=80"
+
+  misp-instance-C:
+    image: hackinglab/misp
+    container_name: misp-instance-C
+    restart: unless-stopped
+    depends_on:
+      - database-instance-C
+    networks:
+      - external
+      - internal-instance-C
+    ports: 
+      - "12000:80"
+    volumes:
+      - ./data-instance-C/misp:/var/www/MISP:rw
+    environment:
+      - MYSQL_HOST=database-instance-C
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
+      - MISP_BASEURL=http://instance-c.misp.localhost
+      - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
+      - TIMEZONE=${TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.misp-c.rule=Host(`instance-c.misp.localhost`)"
+      - "traefik.http.routers.misp-c.service=misp-instance-C"
+      - "traefik.http.services.misp-c.loadbalancer.server.port=80"
 
   database-instance-A:
     image: mysql/mysql-server:5.7
@@ -58,7 +113,35 @@ services:
     networks:
       - internal-instance-A
     volumes:
-      - ./data/database:/var/lib/mysql:rw
+      - ./data-instance-A/database:/var/lib/mysql:rw
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  
+  database-instance-B:
+    image: mysql/mysql-server:5.7
+    container_name: database-instance-B
+    restart: unless-stopped
+    networks:
+      - internal-instance-B
+    volumes:
+      - ./data-instance-B/database:/var/lib/mysql:rw
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  
+  database-instance-C:
+    image: mysql/mysql-server:5.7
+    container_name: database-instance-C
+    restart: unless-stopped
+    networks:
+      - internal-instance-C
+    volumes:
+      - ./data-instance-C/database:/var/lib/mysql:rw
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -71,5 +154,13 @@ networks:
     driver: bridge
   internal-instance-A:
     name: internal-instance-A
+    driver: bridge
+    internal: true
+  internal-instance-B:
+    name: internal-instance-B
+    driver: bridge
+    internal: true
+  internal-instance-C:
+    name: internal-instance-C
     driver: bridge
     internal: true
