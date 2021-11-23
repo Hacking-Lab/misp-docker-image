@@ -5,6 +5,7 @@ import time
 import subprocess
 import os
 import requests
+import uuid
 
 misp_url = "http://localhost/"
 misp_verifycert = False
@@ -17,21 +18,15 @@ admin_pw = "lab-admin"
 labs_count = 10
 
 def getVitalSigns():
-    print("vital")
     r = requests.get('http://localhost/users/login')
-    print("MISP Status Code " + str(r.status_code))
-    #print("MISP Reply" + r.text)
-
 
 def getKey(email):
-    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey "+ email +" | sed '1d'")
+    subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey "+ email +" | sed '1d'")
     misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey "+ email +" | cut -d ':' -f 2 | cut -d ' ' -f 2")
-    print("Your MISP admin key is: " + misp_key)
     return misp_key
 
-def getInstance(misp_key):
+def adminApiSession(misp_key):
     global misp 
-    print("Instance got MISP key:" + misp_key)
     misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 # Setup server
@@ -42,87 +37,84 @@ def updateInstance():
     misp.enable_taxonomy('tlp')
 
 def setServerSettings():
-    print("Started Server Settings")
     misp.set_server_setting("Security.password_policy_length", 7, True)
     misp.set_server_setting("Security.password_policy_complexity", "/(a-z)*/", True)
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
     misp.set_server_setting("MISP.welcome_text_top","Welcome to Malware Information Sharing Platform " ,True)
 
 # Create organizations
-def createOrg():
-    for i in range(labs_count):
-        org = MISPOrganisation()
-        org.name = 'Lab_' + str(i+1)
-        org.nationality = "Switzerland"
-        org.local = True
-        misp.add_organisation(org, pythonify=True)
+def createOrg(orgname):
+    org = MISPOrganisation()
+    org.name = orgname
+    org.nationality = "Switzerland"
+    org.local = True
+    misp.add_organisation(org, pythonify=True)
 
-# Create users
-def createLabUsers():
-    for i in range(labs_count):
-        user = MISPUser()
-        user.email = default_nickname + '@misp-lab' + str(i+1) + '.com'
-        user.org_id = i+2 #offset -> org 1 = admin org
-        user.role_id = 3
-        user.password = default_pw
-        user.change_pw = 0
-        misp.add_user(user, pythonify=True)
-
-def createLabAdmins():
-    global admin_auth_keys
-    admin_auth_keys = []
-    for i in range(labs_count):
-        user = MISPUser()
-        user.email = admin_nickname + '@misp-lab' + str(i+1) + '.com'
-        user.org_id = i+2 #offset -> org 1 = admin org
-        user.role_id = 1
-        user.password = admin_pw
-        user.change_pw = 0
-        misp.add_user(user, pythonify=True)
-        admin_auth_keys.append(getKey(user.email))
+# Create user
+def createUser(email, orgId, role, password):
+    user = MISPUser()
+    user.email = email
+    user.org_id = orgId
+    user.role_id = role
+    user.password = password
+    user.change_pw = 0
+    misp.add_user(user, pythonify=True)
 
 # import events for every lab
-def importEvents():
-    for lab in range(labs_count):
+def importEvents(apiKey, lab):
         
-        misp_instance = PyMISP(misp_url, admin_auth_keys.pop(0), misp_verifycert)
-        current_lab = 'Lab_' + str(lab + 1)
+    labApiSession = PyMISP(misp_url, apiKey, misp_verifycert)
+    lab_name = 'Lab_' + str(lab)
 
-        # open json file with events
-        try:
-            with open ('./' + current_lab + '.json', 'r') as f:
-                for e in f:
-                    events = json.loads(e)
-                print('found file ' + current_lab)
-        except:
-            print('cant find file ' + current_lab)
-            continue
+    # open json file with events
+    try:
+        with open ('./' + lab_name + '.json', 'r') as f:
+            for e in f:
+                events = json.loads(e)
+            print('found file ' + lab_name)
+    except:
+        print('cannot find file ' + lab_name)
+        return
 
-        # find correct lab org uuid
-        org = misp.get_organisation(lab + 2)
-        org_id = org['Organisation']['id']
-        org_name = org ['Organisation']['name']
-        org_uuid = org['Organisation']['uuid']
-        
-        # edit file
-        for event in range(len(events['response'])):
-            # remove event uuid
-            events['response'][event]['Event']['uuid'] = ""
-            events['response'][event]['Event']['orgc_id'] = org_id
-            events['response'][event]['Event']['org_id'] = org_id
-            
-            # edit org
-            events['response'][event]['Event']['Org']['id'] = org_id
-            events['response'][event]['Event']['Org']['name'] = org_name
-            events['response'][event]['Event']['Org']['uuid'] = org_uuid
-            # edit orgC
-            events['response'][event]['Event']['Orgc']['id'] = org_id
-            events['response'][event]['Event']['Orgc']['name'] = org_name
-            events['response'][event]['Event']['Orgc']['uuid'] = org_uuid
+    # find correct lab org uuid
+    org = misp.get_organisation(lab + 1)
+    org_id = org['Organisation']['id']
+    org_name = org ['Organisation']['name']
+    org_uuid = org['Organisation']['uuid']
+    
+    # edit file
+    for event in range(len(events['response'])):
+        # set new event uuids
+        events['response'][event]['Event']['uuid'] = uuid.uuid4()
+        events['response'][event]['Event']['orgc_id'] = org_id
+        events['response'][event]['Event']['org_id'] = org_id
+        # edit org
+        events['response'][event]['Event']['Org']['id'] = org_id
+        events['response'][event]['Event']['Org']['name'] = org_name
+        events['response'][event]['Event']['Org']['uuid'] = org_uuid
+        # edit orgC
+        events['response'][event]['Event']['Orgc']['id'] = org_id
+        events['response'][event]['Event']['Orgc']['name'] = org_name
+        events['response'][event]['Event']['Orgc']['uuid'] = org_uuid
+        # upload file
+        labApiSession.add_event(events['response'][event])
 
-    # upload file
-            print(misp_instance.add_event(events['response'][event]))
 
+def cleanup():
+    # remove initalisation user + org
+    misp.delete_user(1)
+    misp.delete_organisation(1)
+
+    # remove itself from supervisord.conf
+    lines = []
+    path = "/etc/supervisor/conf.d/supervisord.conf"
+    with open(path, 'r') as fp:
+        lines = fp.readlines()
+
+    with open(path, 'w') as fp:
+        for number, line in enumerate(lines):
+            if number not in [29, 36]:
+                fp.write(line)
 
 x = True
 while x:
@@ -130,19 +122,62 @@ while x:
         time.sleep(10)
         getVitalSigns()
         misp_key = getKey('admin@admin.test')
-        getInstance(misp_key)
+        adminApiSession(misp_key)
         x = False
-    except KeyboardInterrupt:
-        break
     except:
         x = True
 
-print("MISP instance is running, init lab env")
-time.sleep(5)
 updateInstance()
 setServerSettings()
-createOrg()
-createLabUsers()
-createLabAdmins()
-importEvents()
+
+
+#################### LAB CONFIGURATION ####################
+
+# Lab 1 (Introduction)
+createOrg(orgname='lab1')
+createUser(email=default_nickname + '@misp-lab1.com', orgId=2, role=3, password=default_pw)
+
+# Lab 2 (Phishing)
+createOrg(orgname='lab2')
+createUser(email=default_nickname + '@misp-lab2.com', orgId=3, role=3, password=default_pw)
+
+# Lab 3 (Sandbox)
+createOrg(orgname='lab3')
+createUser(email=default_nickname + '@misp-lab3.com', orgId=4, role=3, password=default_pw)
+
+# Lab 4 (API)
+createOrg(orgname='lab4')
+createUser(email=default_nickname + '@misp-lab4.com', orgId=5, role=3, password=default_pw)
+
+# Lab 5 (MITRE ATT&CK)
+createOrg(orgname='lab5')
+createUser(email=admin_nickname + '@misp-lab5.com', orgId=6, role=2, password=default_pw)
+createUser(email=default_nickname + '@misp-lab5.com', orgId=6, role=3, password=default_pw)
+importEvents(lab=5, apiKey=getKey(email=admin_nickname + '@misp-lab5.com'))
+
+# Lab 6 (Organization Sync)
+createOrg(orgname='lab6-org-A')
+createUser(email=admin_nickname + '@site1.misp-lab6.com', orgId=7, role=2, password=default_pw)
+createUser(email=default_nickname + '@site1.misp-lab6.com', orgId=7, role=3, password=default_pw)
+importEvents(lab=6, apiKey=getKey(email=admin_nickname + '@site1.misp-lab6.com'))
+
+# Lab 7 (Sharing Correlation)
+createOrg(orgname='lab7')
+createUser(email=default_nickname + '@misp-lab7.com', orgId=8, role=3, password=default_pw)
+
+# Lab 8 (IDS / Snort)
+createOrg(orgname='lab8')
+createUser(email=default_nickname + '@misp-lab8.com', orgId=9, role=3, password=default_pw)
+
+# Lab 9 (Modules)
+createOrg(orgname='lab9')
+createUser(email=default_nickname + '@misp-lab9.com', orgId=10, role=3, password=default_pw)
+
+# Site Admin
+createOrg(orgname='site-admin')
+createUser(email='site-admin@misp-lab.com', orgId=11, role=1, password=default_pw)
+
+#################### LAB CONFIGURATION ####################
+
+cleanup()
 os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
