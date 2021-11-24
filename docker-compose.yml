@@ -45,7 +45,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
-      - "traefik.http.routers.misp-a.service=misp-instance-A"
+      - "traefik.http.routers.misp-a.service=misp-a"
       - "traefik.http.services.misp-a.loadbalancer.server.port=80"
 
   misp-instance-B:
@@ -74,7 +74,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
-      - "traefik.http.routers.misp-b.service=misp-instance-B"
+      - "traefik.http.routers.misp-b.service=misp-b"
       - "traefik.http.services.misp-b.loadbalancer.server.port=80"
 
   misp-instance-C:
@@ -103,7 +103,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-c.rule=Host(`instance-c.misp.localhost`)"
-      - "traefik.http.routers.misp-c.service=misp-instance-C"
+      - "traefik.http.routers.misp-c.service=misp-c"
       - "traefik.http.services.misp-c.loadbalancer.server.port=80"
 
   database-instance-A:
