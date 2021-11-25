@@ -183,12 +183,12 @@ if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
     createUser(email=admin_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=2, password=default_pw)
     createUser(email=default_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=3, password=default_pw)
     createUser(email='publisher-org-a@instance-a.misp-lab6.com', orgId=8, role=4, password=default_pw)
+    importEvents(lab=6, apiKey=getKey(email=admin_nickname + '-org-a@instance-a.misp-lab6.com'))
 
     createOrg(orgname='lab6-org-B')
     createUser('admin-org-b@instance-a.misp-lab6.com', orgId=9, role=2, password=default_pw)
     createUser(email=default_nickname + '-org-b@instance-a.misp-lab6.com', orgId=9, role=3, password=default_pw)
     createUser(email='publisher-org-b@instance-a.misp-lab6.com', orgId=9, role=4, password=default_pw)
-    importEvents(lab=6, apiKey=getKey(email=admin_nickname + '-org-b@instance-a.misp-lab6.com'))
 
 if os.environ['MISP_BASEURL'] == "http://instance-b.misp.localhost":
     createOrg(orgname='lab6-org-F')
