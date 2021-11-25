@@ -51,6 +51,13 @@ def createOrg(orgname):
     org.local = True
     misp.add_organisation(org, pythonify=True)
 
+def createExternalOrg(orgname):
+    org = MISPOrganisation()
+    org.name = orgname
+    org.nationality = "Switzerland"
+    org.local = False
+    misp.add_organisation(org, pythonify=True)
+
 # Create user
 def createUser(email, orgId, role, password):
     user = MISPUser()
@@ -100,16 +107,8 @@ def importEvents(apiKey, lab):
         # upload file
         labApiSession.add_event(events['response'][event])
 
-def addSyncServer(id, name, url, org, push, pull, remote_org_id):
-    server = MISPServer()
-    server.id = id
-    server.name = name
-    server.url = url
-    server.org_id = org
-    server.push = push
-    server.pull = pull
-    server.remote_org_id = remote_org_id
-    server.self_signed = True
+def addSyncServer(name, url):
+    server = {"Server": {'url': url, 'uuid': '0ac33559-ad37-4147-b61d-95df6ab76920', 'authkey': "aaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 'self_signed': 'True', 'pull': 'True', 'Organisation': {'name': name, 'uuid': '51710c9f-73bf-483a-94c4-64313c3a4c91'}}}
     misp.add_server(server)
 
 
@@ -183,7 +182,7 @@ if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
     createOrg(orgname='lab6-org-A')
     createUser(email=admin_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=2, password=default_pw)
     createUser(email=default_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=3, password=default_pw)
-    createUser(email=admin_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=4, password=default_pw)
+    createUser(email='publisher-org-a@instance-a.misp-lab6.com', orgId=8, role=4, password=default_pw)
 
     createOrg(orgname='lab6-org-B')
     createUser('admin-org-b@instance-a.misp-lab6.com', orgId=9, role=2, password=default_pw)
@@ -197,14 +196,11 @@ if os.environ['MISP_BASEURL'] == "http://instance-b.misp.localhost":
     createUser(email=default_nickname + '-org-f@instance-b.misp-lab6.com', orgId=3, role=3, password=default_pw)
     createUser(email='publisher-org-f@instance-b.misp-lab6.com', orgId=3, role=4, password=default_pw)
 
-if os.environ['MISP_BASEURL'] == "http://instance-c.misp.localhost":
+if os.environ['MISP_BASEURL'] == "http://instance-e.misp.localhost":
     createOrg(orgname='lab6-org-E')
-    createUser(email=admin_nickname + '-org-e@instance-c.misp-lab6.com', orgId=3, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-e@instance-c.misp-lab6.com', orgId=3, role=3, password=default_pw)
-    createUser(email='publisher-org-e@instance-c.misp-lab6.com', orgId=3, role=4, password=default_pw)
+    createUser(email=admin_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=2, password=default_pw)
+    createUser(email=default_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=3, password=default_pw)
     addSyncServer(id=2, name="Instance B", url="http://misp-instance-B", org=2, pull=True, push=False, remote_org_id=4)
-
-
 
 # Lab 7 (Sharing Correlation)
 if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
