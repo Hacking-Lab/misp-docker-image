@@ -200,7 +200,7 @@ if os.environ['MISP_BASEURL'] == "http://instance-e.misp.localhost":
     createOrg(orgname='lab6-org-E')
     createUser(email=admin_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=2, password=default_pw)
     createUser(email=default_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=3, password=default_pw)
-    addSyncServer(id=2, name="Instance B", url="http://misp-instance-B", org=2, pull=True, push=False, remote_org_id=4)
+    addSyncServer(name="Instance B", url="http://misp-instance-B")
 
 # Lab 7 (Sharing Correlation)
 if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
