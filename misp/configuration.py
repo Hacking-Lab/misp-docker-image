@@ -213,7 +213,7 @@ if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
 # Lab 8 (IDS / Snort)
 if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
     createOrg(orgname='lab8')
-    createUser(email=default_nickname + '@misp-lab8.com', orgId=11, role=3, password=default_pw)
+    createUser(email=default_nickname + '@misp-lab8.com', orgId=11, role=1, password=default_pw)
     createUser(email=admin_nickname + '@misp-lab8.com', orgId=11, role=2, password=default_pw)
 
 
