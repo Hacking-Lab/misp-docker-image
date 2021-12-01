@@ -105,6 +105,23 @@ if [ -r /.firstboot.tmp ]; then
 		#Redis should not run as a daemon
 		sed -i "s/daemonize yes/daemonize no/g" /etc/redis/redis.conf
 
+        # Install MISP Modules
+        sudo apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev build-essential -y
+        sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
+        cd /usr/local/src/
+        sudo chown -R www-data: .
+        sudo -u www-data git clone https://github.com/MISP/misp-modules.git
+        cd misp-modules
+        sudo -u www-data /var/www/MISP/venv/bin/pip install -I -r REQUIREMENTS
+        sudo -u www-data /var/www/MISP/venv/bin/pip install .
+        # Start misp-modules as a service
+        sudo cp etc/systemd/system/misp-modules.service /etc/systemd/system/
+        sudo systemctl daemon-reload
+        sudo systemctl enable --now misp-modules
+        /var/www/MISP/venv/bin/misp-modules -l 127.0.0.1 -s & #to start the modules
+
+
+
         # Display tips
         cat <<__WELCOME__
 Congratulations!

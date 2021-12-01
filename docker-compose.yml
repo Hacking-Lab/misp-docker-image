@@ -32,6 +32,7 @@ services:
       - "10000:80"
     volumes:
       - ./data-instance-A/misp:/var/www/MISP:rw
+      - ./data-shared/data-shared:rw
     environment:
       - MYSQL_HOST=database-instance-A
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -61,6 +62,7 @@ services:
       - "11000:80"
     volumes:
       - ./data-instance-B/misp:/var/www/MISP:rw
+      - ./data-shared/data-shared:rw
     environment:
       - MYSQL_HOST=database-instance-B
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -90,6 +92,7 @@ services:
       - "12000:80"
     volumes:
       - ./data-instance-E/misp:/var/www/MISP:rw
+      - ./data-shared/data-shared:rw
     environment:
       - MYSQL_HOST=database-instance-E
       - MYSQL_DATABASE=${MYSQL_DATABASE}

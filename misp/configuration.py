@@ -205,26 +205,45 @@ if os.environ['MISP_BASEURL'] == "http://instance-e.misp.localhost":
     createExternalOrg(orgname="PLEASE REPLACE ME")
     addSyncServer(name="Instance B", url="http://misp-instance-B", remote_org_id=4)
 
-# Lab 7 (Sharing Correlation)
+# Lab 7 (MISP Modules)
 if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab7')
-    createUser(email=default_nickname + '@misp-lab7.com', orgId=10, role=3, password=default_pw)
+    createOrg(orgname='lab7-A')
+    createOrg(orgname='lab7-B')
+    createUser(email=admin_nickname + '-org-a@misp-lab7.com', orgId=10, role=2, password=default_pw)
+    createUser(email=default_nickname + '--org-a@misp-lab7.com', orgId=10, role=3, password=default_pw)
+    createUser(email=admin_nickname + '-org-b@misp-lab7.com', orgId=11, role=2, password=default_pw)
+    createUser(email=default_nickname + '-org-b@misp-lab7.com', orgId=11, role=3, password=default_pw)
+    importEvents(lab=7, apiKey=getKey(email=admin_nickname + '-org-a@misp-lab7.com'))
+    importEvents(lab=7, apiKey=getKey(email=admin_nickname + '-org-b@misp-lab7.com'))
+    misp.set_server_setting("Plugin.Enrichment_services_enable", True, True)
+    misp.set_server_setting("Plugin.Enrichment_hover_enable", True, True)
+    misp.set_server_setting("Plugin.Enrichment_geoip_city_enabled", True, True)
+    misp.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 11, True)
+    misp.set_server_setting("Plugin.Enrichment_geoip_city_local_geolite_db", "/data-shared/geolite/city.mmdb", True)
+    misp.set_server_setting("Plugin.Enrichment_btc_scam_check_enabled", True, True)
+    misp.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 11, True)
+    misp.set_server_setting("Plugin.Enrichment_macvendors_enabled", True, True)
+    misp.set_server_setting("Plugin.Enrichment_macvendors_restrict", 11, True)
+    misp.set_server_setting("Plugin.Enrichment_qrcode_enabled", True, True)
+    misp.set_server_setting("Plugin.Enrichment_qrcode_restrict", 11, True)
+    misp.set_server_setting("Plugin.Enrichment_services_enable", True, True)
+    misp.set_server_setting("Plugin.Enrichment_services_restrict", 11, True)
+    misp.set_server_setting("Plugin.Enrichment_urlhaus_enabled", True, True)
+    misp.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 11, True)
 
-# Lab 8 (IDS / Snort)
+
+
+# Lab 8 (Warninglist)
 if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
     createOrg(orgname='lab8')
-    createUser(email=default_nickname + '@misp-lab8.com', orgId=11, role=1, password=default_pw)
-    createUser(email=admin_nickname + '@misp-lab8.com', orgId=11, role=2, password=default_pw)
-
-
-# Lab 9 (Modules)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab9')
-    createUser(email=default_nickname + '@misp-lab9.com', orgId=12, role=3, password=default_pw)
-
+    createUser(email=default_nickname + '@misp-lab8.com', orgId=12, role=1, password=default_pw)
+    createUser(email=admin_nickname + '@misp-lab8.com', orgId=12, role=2, password=default_pw)
 
 
 #################### LAB CONFIGURATION ####################
 
 #cleanup()
 os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
+
+
+misp_key = "gNQHKVo6DkAtmeOW2rODdyDTiHF1a0A58EGBagGB"
