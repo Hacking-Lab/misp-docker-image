@@ -110,15 +110,10 @@ if [ -r /.firstboot.tmp ]; then
         sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
         cd /usr/local/src/
         sudo chown -R www-data: .
-        sudo -u www-data git clone https://github.com/MISP/misp-modules.git
+        sudo -u www-data /var/www/MISP/venv/bin/update_misp_modules.sh
         cd misp-modules
         sudo -u www-data /var/www/MISP/venv/bin/pip install -I -r REQUIREMENTS
         sudo -u www-data /var/www/MISP/venv/bin/pip install .
-        # Start misp-modules as a service
-        sudo cp etc/systemd/system/misp-modules.service /etc/systemd/system/
-        sudo systemctl daemon-reload
-        sudo systemctl enable --now misp-modules
-        /var/www/MISP/venv/bin/misp-modules -l 127.0.0.1 -s & #to start the modules
 
 
 
