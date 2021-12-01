@@ -115,8 +115,8 @@ def addSyncServer(name, url, remote_org_id):
 
 def cleanup():
     # remove initalisation user + org
-    misp.delete_user(1)
-    misp.delete_organisation(1)
+    # misp.delete_user(1)
+    # misp.delete_organisation(1)
 
     # remove itself from supervisord.conf
     lines = []
@@ -125,9 +125,13 @@ def cleanup():
         lines = fp.readlines()
 
     with open(path, 'w') as fp:
-        for number, line in enumerate(lines):
-            if number not in [29, 36]:
+        for line in lines:
+            if line == "[program:configuration]\n":
+                break
+            else:
                 fp.write(line)
+
+
 
 x = True
 while x:
@@ -242,8 +246,5 @@ if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
 
 #################### LAB CONFIGURATION ####################
 
-#cleanup()
+cleanup()
 os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
-
-
-misp_key = "gNQHKVo6DkAtmeOW2rODdyDTiHF1a0A58EGBagGB"
