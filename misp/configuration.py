@@ -105,6 +105,8 @@ def importEvents(apiKey, lab):
         events['response'][event]['Event']['Orgc']['id'] = org_id
         events['response'][event]['Event']['Orgc']['name'] = org_name
         events['response'][event]['Event']['Orgc']['uuid'] = org_uuid
+        for attribute in range(len(events['response'][event]['Event']['Attribute'])):
+            events['response'][event]['Event']['Attribute'][attribute]['uuid'] = uuid.uuid4()
         # upload file
         labApiSession.add_event(events['response'][event])
 
