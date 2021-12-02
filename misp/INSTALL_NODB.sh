@@ -2710,10 +2710,9 @@ installSupported () {
   #trap "kill -9 $SPIN_PID" `seq 0 15`
 
   # Install misp-modules - functionLocation('generic/misp-modules-debian.md')
-  # [[ -n $MODULES ]]   || [[ -n $ALL ]] && 
-  mispmodules
+  [[ -n $MODULES ]]   || [[ -n $ALL ]] && mispmodules
   progress 4
-  # mispmodules
+
 
 
   # Install Viper - functionLocation('generic/viper-debian.md')
