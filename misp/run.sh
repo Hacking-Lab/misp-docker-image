@@ -110,7 +110,8 @@ if [ -r /.firstboot.tmp ]; then
         sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
         cd /usr/local/src/
         sudo chown -R www-data: .
-        sudo -u www-data /var/www/MISP/venv/bin/update_misp_modules.sh
+        #FAILS HERE ->
+        # sudo -u www-data /var/www/MISP/venv/bin/update_misp_modules.sh
         cd misp-modules
         sudo -u www-data /var/www/MISP/venv/bin/pip install -I -r REQUIREMENTS
         sudo -u www-data /var/www/MISP/venv/bin/pip install .
