@@ -24,7 +24,7 @@ ENV LANG en_US.UTF-8
 RUN useradd misp && usermod -aG sudo misp
 
 # Install script
-COPY --chown=misp:misp INSTALL_NODB.sh* ./
+COPY --chown=misp:misp ./installation/INSTALL_NODB.sh* ./
 RUN chmod +x INSTALL_NODB.sh
 RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
@@ -70,23 +70,23 @@ RUN ( \
 
 # Add run script
 # Trigger to perform first boot operations
-ADD run.sh /run.sh
+ADD installation/run.sh /run.sh
 RUN mv /etc/apache2/sites-available/misp-ssl.conf /etc/apache2/sites-available/misp-ssl.conf.bak
-ADD misp-ssl.conf /etc/apache2/sites-available/misp-ssl.conf
+ADD installation/misp-ssl.conf /etc/apache2/sites-available/misp-ssl.conf
 RUN chmod 0755 /run.sh && touch /.firstboot.tmp
 # Make a backup of /var/www/MISP to restore it to the local moint point at first boot
 WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
 
 # Add logo
-COPY logo.png /logo.png
+COPY configuration/data/logo.png /logo.png
 RUN chmod 0777 /logo.png
 # Add Lab config
 COPY --chown=misp:misp Lab_* /
 RUN chmod 0755 /Lab_*
 
 # Configuration script
-ADD configuration.py /configuration.py
+ADD configuration/configuration.py /configuration.py
 RUN chmod 0755 /configuration.py
 
 VOLUME /var/www/MISP
