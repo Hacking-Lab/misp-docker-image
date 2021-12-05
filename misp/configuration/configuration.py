@@ -9,15 +9,8 @@ from role import Role
 misp_url = "http://localhost/"
 misp_verifycert = False
 
-# default_nickname = "investigator"
-# default_pw = "compass"
-# admin_nickname = "admin"
-# admin_pw = "lab-admin"
-
-# labs_count = 10
-
-def getVitalSigns():
-    r = requests.get('http://localhost/users/login')
+# def getVitalSigns():
+#     r = requests.get('http://localhost/users/login')
 
 def getApiKey(email):
     subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey "+ email +" | sed '1d'")
@@ -25,7 +18,7 @@ def getApiKey(email):
     return misp_key
 
 def adminApiSession(misp_key):
-    global misp 
+    global misp
     misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 # Setup server
@@ -33,7 +26,7 @@ def updateInstance():
     misp.update_object_templates()
     misp.update_galaxies()
     misp.update_taxonomies()
-    #misp.enable_taxonomy('tlp')
+    # misp.enable_taxonomy('tlp')
     misp.update_warninglists()
     misp.get_user(1, True)
 
@@ -41,7 +34,7 @@ def setServerSettings():
     misp.set_server_setting("Security.password_policy_length", 7, True)
     misp.set_server_setting("Security.password_policy_complexity", "/(a-z)*/", True)
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
-    misp.set_server_setting("MISP.welcome_text_top","Welcome to Malware Information Sharing Platform " ,True)
+    misp.set_server_setting("MISP.welcome_text_top", "Welcome to Malware Information Sharing Platform ", True)
 
 # Create organizations
 # def createOrg(orgname):
@@ -71,44 +64,44 @@ def setServerSettings():
 
 # import events for every lab
 # def importEvents(apiKey, lab):
-    #
-    # labApiSession = PyMISP(misp_url, apiKey, misp_verifycert)
-    # lab_name = 'Lab_' + str(lab)
-    #
-    # # open json file with events
-    # try:
-    #     with open ('./' + lab_name + '.json', 'r') as f:
-    #         for e in f:
-    #             events = json.loads(e)
-    #         print('found file ' + lab_name)
-    # except:
-    #     print('cannot find file ' + lab_name)
-    #     return
-    #
-    # # find correct lab org uuid
-    # org = misp.get_organisation(lab + 1)
-    # org_id = org['Organisation']['id']
-    # org_name = org ['Organisation']['name']
-    # org_uuid = org['Organisation']['uuid']
-    #
-    # # edit file
-    # for event in range(len(events['response'])):
-    #     # set new event uuids
-    #     events['response'][event]['Event']['uuid'] = uuid.uuid4()
-    #     events['response'][event]['Event']['orgc_id'] = org_id
-    #     events['response'][event]['Event']['org_id'] = org_id
-    #     # edit org
-    #     events['response'][event]['Event']['Org']['id'] = org_id
-    #     events['response'][event]['Event']['Org']['name'] = org_name
-    #     events['response'][event]['Event']['Org']['uuid'] = org_uuid
-    #     # edit orgC
-    #     events['response'][event]['Event']['Orgc']['id'] = org_id
-    #     events['response'][event]['Event']['Orgc']['name'] = org_name
-    #     events['response'][event]['Event']['Orgc']['uuid'] = org_uuid
-    #     for attribute in range(len(events['response'][event]['Event']['Attribute'])):
-    #         events['response'][event]['Event']['Attribute'][attribute]['uuid'] = uuid.uuid4()
-    #     # upload file
-    #     labApiSession.add_event(events['response'][event])
+#
+# labApiSession = PyMISP(misp_url, apiKey, misp_verifycert)
+# lab_name = 'Lab_' + str(lab)
+#
+# # open json file with events
+# try:
+#     with open ('./' + lab_name + '.json', 'r') as f:
+#         for e in f:
+#             events = json.loads(e)
+#         print('found file ' + lab_name)
+# except:
+#     print('cannot find file ' + lab_name)
+#     return
+#
+# # find correct lab org uuid
+# org = misp.get_organisation(lab + 1)
+# org_id = org['Organisation']['id']
+# org_name = org ['Organisation']['name']
+# org_uuid = org['Organisation']['uuid']
+#
+# # edit file
+# for event in range(len(events['response'])):
+#     # set new event uuids
+#     events['response'][event]['Event']['uuid'] = uuid.uuid4()
+#     events['response'][event]['Event']['orgc_id'] = org_id
+#     events['response'][event]['Event']['org_id'] = org_id
+#     # edit org
+#     events['response'][event]['Event']['Org']['id'] = org_id
+#     events['response'][event]['Event']['Org']['name'] = org_name
+#     events['response'][event]['Event']['Org']['uuid'] = org_uuid
+#     # edit orgC
+#     events['response'][event]['Event']['Orgc']['id'] = org_id
+#     events['response'][event]['Event']['Orgc']['name'] = org_name
+#     events['response'][event]['Event']['Orgc']['uuid'] = org_uuid
+#     for attribute in range(len(events['response'][event]['Event']['Attribute'])):
+#         events['response'][event]['Event']['Attribute'][attribute]['uuid'] = uuid.uuid4()
+#     # upload file
+#     labApiSession.add_event(events['response'][event])
 
 # def addSyncServer(name, url, remote_org_id):
 #     server = {"Server": {'name': name, 'url': url, 'uuid': '0ac33559-ad37-4147-b61d-95df6ab76920', 'authkey': "aaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 'self_signed': 'True', 'pull': True, 'remote_org_id': remote_org_id}}
@@ -134,12 +127,10 @@ def setServerSettings():
 #                 fp.write(line)
 
 
-
 x = True
 while x:
     try:
         time.sleep(10)
-        getVitalSigns()
         misp_key = getApiKey('admin@admin.test')
         adminApiSession(misp_key)
         x = False
@@ -149,105 +140,89 @@ while x:
 updateInstance()
 setServerSettings()
 
+# --------------------  LAB CONFIGURATION  -------------------- #
 
-#################### LAB CONFIGURATION ####################
+# Lab 0: Instance Admin Configuration
+lab0 = Lab(0, misp)
+lab0.add_org()
+lab0.add_user(Role.admin)
 
-# Instance Admin
-createOrg(orgname='instance-admin')
-misp.get_organisation('instance-admin')
-createUser(email='instance-admin@misp-lab.com', orgId=2, role=1, password=default_pw)
+# Lab 1: Introduction
+lab1 = Lab(1, misp)
+lab1.add_org()
+lab1.add_user(Role.investigator)
 
-# Lab 1 (Introduction)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab1')
-    createUser(email=default_nickname + '@misp-lab1.com', orgId=3, role=3, password=default_pw)
+# Lab 2: Phishing E-Mail
+lab2 = Lab(2, misp)
+lab2.add_org()
+lab2.add_user(Role.investigator)
 
-# Lab 2 (Phishing)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab2')
-    createUser(email=default_nickname + '@misp-lab2.com', orgId=4, role=3, password=default_pw)
+# Lab 3: Malware
+lab3 = Lab(3, misp)
+lab3.add_org()
+lab3.add_user(Role.investigator)
 
-# Lab 3 (Sandbox)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab3')
-    createUser(email=default_nickname + '@misp-lab3.com', orgId=5, role=3, password=default_pw)
+# Lab 4: API
+lab4 = Lab(4, misp)
+lab4.add_org()
+lab4.add_user(Role.investigator)
 
-# Lab 4 (API)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab4')
-    createUser(email=default_nickname + '@misp-lab4.com', orgId=6, role=3, password=default_pw)
+# Lab 5: MISP Visualisation
+lab5 = Lab(5, misp)
+lab5.add_org()
+lab5.add_user(Role.org_admin)
+lab5.add_user(Role.investigator)
+lab5.import_events(lab5.get_admin())
 
-# Lab 5 (MITRE ATT&CK)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab5')
-    createUser(email=admin_nickname + '@misp-lab5.com', orgId=7, role=2, password=default_pw)
-    createUser(email=default_nickname + '@misp-lab5.com', orgId=7, role=3, password=default_pw)
-    importEvents(lab=5, apiKey=getApiKey(email=admin_nickname + '@misp-lab5.com'))
+# Lab 6: Synchronisation
+# TODO: Implement if else statement for Lab instance
+lab6_a = Lab(6, misp, "A")
+lab6_a.add_org('lab6-org-A')
+lab6_a.add_user(Role.org_admin)
+lab6_a.add_user(Role.publisher)
+lab6_a.add_user(Role.investigator)
+lab6_a.import_events(lab6_a.get_admin())
 
-# Lab 6 (Organization Sync)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab6-org-A')
-    createUser(email=admin_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-a@instance-a.misp-lab6.com', orgId=8, role=3, password=default_pw)
-    createUser(email='publisher-org-a@instance-a.misp-lab6.com', orgId=8, role=4, password=default_pw)
-    importEvents(lab=6, apiKey=getApiKey(email=admin_nickname + '-org-a@instance-a.misp-lab6.com'))
+lab6_b = Lab(6, misp, "B")
+lab6_b.add_org('lab6-org-B')
+lab6_b.add_user(Role.org_admin, 'lab6-org-B')
+lab6_b.add_user(Role.publisher, 'lab6-org-B')
+lab6_b.add_user(Role.investigator, 'lab6-org-B')
+lab6_b.add_org('lab6-org-F')
+lab6_b.add_user(Role.org_admin, 'lab6-org-F')
+lab6_b.add_user(Role.publisher, 'lab6-org-F')
+lab6_b.add_user(Role.investigator, 'lab6-org-F')
+lab6_b.add_user(Role.sync_user, 'lab6-org-F')
 
-    createOrg(orgname='lab6-org-B')
-    createUser('admin-org-b@instance-a.misp-lab6.com', orgId=9, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-b@instance-a.misp-lab6.com', orgId=9, role=3, password=default_pw)
-    createUser(email='publisher-org-b@instance-a.misp-lab6.com', orgId=9, role=4, password=default_pw)
+lab6_e = Lab(6, misp, "E")
+lab6_e.add_org('lab6-org-E')
+lab6_e.add_user(Role.admin,'lab6-org-E')
+lab6_e.add_user(Role.investigator, 'lab6-org-E')
+# TODO: Refactor this part
+lab6_e.add_org('PLEASE-REPLACE-ME', False)
+lab6_e.add_sync_server('Instance-B', 'http://misp-instance-B', 4)
 
-if os.environ['MISP_BASEURL'] == "http://instance-b.misp.localhost":
-    createOrg(orgname='lab6-org-F')
-    createUser(email=admin_nickname + '-org-f@instance-b.misp-lab6.com', orgId=3, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-f@instance-b.misp-lab6.com', orgId=3, role=3, password=default_pw)
-    createUser(email='publisher-org-f@instance-b.misp-lab6.com', orgId=3, role=4, password=default_pw)
-    createUser(email='sync-org-f@instance-b.misp-lab6.com', orgId=3, role=5, password=default_pw)
+# Lab 7: MISP Modules
+lab7 = Lab(7, misp)
+lab7.add_org('lab7-org-A')
+lab7.add_user(Role.org_admin, 'lab7-org-A')
+lab7.add_user(Role.investigator, 'lab7-org-A')
+lab7.import_events(lab7.get_admin(0))
 
-if os.environ['MISP_BASEURL'] == "http://instance-e.misp.localhost":
-    createOrg(orgname='lab6-org-E')
-    createUser(email=admin_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-e@instance-e.misp-lab6.com', orgId=3, role=3, password=default_pw)
-    createExternalOrg(orgname="PLEASE REPLACE ME")
-    addSyncServer(name="Instance B", url="http://misp-instance-B", remote_org_id=4)
+lab7.add_org('lab7-org-B')
+lab7.add_user(Role.org_admin, 'lab7-org-B')
+lab7.add_user(Role.investigator, 'lab7-org-B')
+lab7.import_events(lab7.get_admin(1))
+lab7.add_configuration()
 
-# Lab 7 (MISP Modules)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab7-A')
-    createOrg(orgname='lab7-B')
-    createUser(email=admin_nickname + '-org-a@misp-lab7.com', orgId=10, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-a@misp-lab7.com', orgId=10, role=3, password=default_pw)
-    createUser(email=admin_nickname + '-org-b@misp-lab7.com', orgId=11, role=2, password=default_pw)
-    createUser(email=default_nickname + '-org-b@misp-lab7.com', orgId=11, role=3, password=default_pw)
-    importEvents(lab=7, apiKey=getApiKey(email=admin_nickname + '-org-a@misp-lab7.com'))
-    importEvents(lab=7, apiKey=getApiKey(email=admin_nickname + '-org-b@misp-lab7.com'))
-    misp.set_server_setting("Plugin.Enrichment_services_enable", True, True)
-    misp.set_server_setting("Plugin.Enrichment_hover_enable", True, True)
-    misp.set_server_setting("Plugin.Enrichment_geoip_city_enabled", True, True)
-    misp.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 11, True)
-    misp.set_server_setting("Plugin.Enrichment_geoip_city_local_geolite_db", "/data-shared/geolite/city.mmdb", True)
-    misp.set_server_setting("Plugin.Enrichment_btc_scam_check_enabled", True, True)
-    misp.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 11, True)
-    misp.set_server_setting("Plugin.Enrichment_macvendors_enabled", True, True)
-    misp.set_server_setting("Plugin.Enrichment_macvendors_restrict", 11, True)
-    misp.set_server_setting("Plugin.Enrichment_qrcode_enabled", True, True)
-    misp.set_server_setting("Plugin.Enrichment_qrcode_restrict", 11, True)
-    misp.set_server_setting("Plugin.Enrichment_services_enable", True, True)
-    misp.set_server_setting("Plugin.Enrichment_services_restrict", 11, True)
-    misp.set_server_setting("Plugin.Enrichment_urlhaus_enabled", True, True)
-    misp.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 11, True)
+# Lab 8: Warninglist
+lab8 = Lab(8, misp)
+lab8.add_org()
+lab8.add_user(Role.org_admin)
+lab8.add_user(Role.investigator)  # TODO @JW: Are higher privileges needed?
 
-
-
-# Lab 8 (Warninglist)
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    createOrg(orgname='lab8')
-    createUser(email=default_nickname + '@misp-lab8.com', orgId=12, role=1, password=default_pw)
-    createUser(email=admin_nickname + '@misp-lab8.com', orgId=12, role=2, password=default_pw)
-
-
-#################### LAB CONFIGURATION ####################
-
+# --------------------  LAB CONFIGURATION  -------------------- #
 
 os.system("cp /logo.png /var/www/MISP/app/webroot/img/custom/logo.png")
-
+print(" -------------------- Configuration complete -------------------- ")
+# if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
