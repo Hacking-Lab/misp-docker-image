@@ -32,6 +32,7 @@ RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER misp
 
 RUN bash INSTALL_NODB.sh -A -u
+RUN touch /var/tmp/first-configuration
 
 USER root
 
