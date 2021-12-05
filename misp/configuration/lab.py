@@ -24,7 +24,7 @@ class Lab:
 
         if org_name in self.__orgs:
             user = MISPUser()
-            user.email = self.__calc_email(role, org_name)
+            user.email = self.__gen_email(role, org_name[-1])
             user.org_id = self.__orgs[org_name]
             user.role_id = role.value
             user.password = self.default_password
@@ -38,15 +38,16 @@ class Lab:
                 result.api_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey " + result.email + " | cut -d ':' -f 2 | cut -d ' ' -f 2")
                 self.__admins.append(result)
 
-    def __calc_email(self, role: Role, org_name: str) -> str:
+    # TODO: Lab 6 gets wrong names
+    def __gen_email(self, role: Role, org: str) -> str:
         if role.value == 1:
             return role.name + "@misp-lab.com"
         elif len(self.__orgs) == 1:
             return role.name + "@misp-lab" + str(self.__lab_nr) + ".com"
         elif self.__instance is None:
-            return role.name + "-org-" + org_name + "@misp-lab" + str(self.__lab_nr) + ".com"
+            return role.name + "-org-" + org + "@misp-lab" + str(self.__lab_nr) + ".com"
         else:
-            return role.name + "-org-" + org_name + "@instance-" + self.__instance + ".misp-lab" + str(self.__lab_nr) + ".com"
+            return role.name + "-org-" + org + "@instance-" + self.__instance + ".misp-lab" + str(self.__lab_nr) + ".com"
 
     def add_org(self, org_name: str = None, local: bool = True):
         if org_name is None:
