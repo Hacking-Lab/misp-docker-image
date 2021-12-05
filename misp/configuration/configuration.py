@@ -35,6 +35,8 @@ def setServerSettings():
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
     misp.set_server_setting("MISP.welcome_text_top", "Welcome to Malware Information Sharing Platform ", True)
 
+if not os.path.isfile("/var/tmp/first-configuration"):
+    raise Exception('The MISP Instance is already configured')
 
 x = True
 while x:
