@@ -7,15 +7,16 @@ from pymisp import MISPUser, MISPOrganisation, PyMISP
 
 class Lab:
     default_password = 'compass'
-    __users = []
-    __admins = []
-    __orgs = {}
-    __server_settings = ()
 
     def __init__(self, lab_nr: int, api: PyMISP, instance: str = None):
         self.__lab_nr = lab_nr
         self.__api = api
         self.__instance = instance
+        self.__users = []
+        self.__admins = []
+        self.__orgs = {}
+        self.__server_settings = ()
+
 
     def add_user(self, role: Role, org_name: str = None):
         if org_name is None:
@@ -31,10 +32,9 @@ class Lab:
             user.disabled = False
 
             result: MISPUser = self.__api.add_user(user, pythonify=True)
-            if role.value == 2:
+            if role.value > 2:
                 self.__users.append(result)
             else:
-                print("User created " + user.email)
                 result.api_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey " + result.email + " | cut -d ':' -f 2 | cut -d ' ' -f 2")
                 self.__admins.append(result)
 
@@ -60,20 +60,15 @@ class Lab:
 
     def import_events(self, user: MISPUser):
         if not hasattr(user, 'api_key'):
-            print("no API Key defined!")
             return
-        print(user.api_key)
-        print(user.email)
         api = PyMISP('http://localhost/', user.api_key, False)
 
         # open json file with events
         try:
-            print("open file")
             with open('./data/lab_' + str(self.__lab_nr) + '.json', 'r') as f:
                 for e in f:
                     events = json.loads(e)
         except:
-            print("open file failed")
             return
 
         # edit file
@@ -91,9 +86,7 @@ class Lab:
             for attribute in range(len(events['response'][event]['Event']['Attribute'])):
                 events['response'][event]['Event']['Attribute'][attribute]['uuid'] = uuid.uuid4()
             # upload file
-            print("upload file now")
             api.add_event(events['response'][event])
-            print("file uploaded")
 
     def add_configuration(self):
         self.__api.set_server_setting("Plugin.Enrichment_services_enable", True, True)

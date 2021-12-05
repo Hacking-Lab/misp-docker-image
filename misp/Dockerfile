@@ -78,15 +78,9 @@ RUN chmod 0755 /run.sh && touch /.firstboot.tmp
 WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
 
-# Add logo
-COPY configuration/data/logo.png /logo.png
-RUN chmod 0777 /logo.png
-# Add Lab config
-COPY --chown=misp:misp Lab_* /
-RUN chmod 0755 /Lab_*
 
-# Configuration script
-ADD configuration/configuration.py /configuration.py
+# Configuration folder
+ADD configuration/ /
 RUN chmod 0755 /configuration.py
 
 VOLUME /var/www/MISP
