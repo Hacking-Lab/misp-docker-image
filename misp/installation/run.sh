@@ -14,7 +14,15 @@ set -e
 
 if [ -r /.firstboot.tmp ]; then
         sed -i "3i loglevel = debug" /etc/supervisor/conf.d/supervisord.conf
-        echo -e '\n[program:configuration]\ncommand=/bin/bash -c "python3 /configuration.py"\nuser = www-data\nstartsecs = 20\nautorestart = false\nstartretries = 1\n' >> /etc/supervisor/conf.d/supervisord.conf
+        if [ $MISP_BASEURL = "http://instance-a.misp.localhost" ]; then
+            echo -e '\n[program:configuration]\ncommand=command=socat TCP-LISTEN:10000,fork TCP:127.0.0.1:80\nuser = root\nstartsecs = 0\nautorestart = true\n' >> /etc/supervisor/conf.d/supervisord.conf
+        elif [ $MISP_BASEURL = "http://instance-b.misp.localhost" ]; then
+            echo -e '\n[program:configuration]\ncommand=command=socat TCP-LISTEN:11000,fork TCP:127.0.0.1:80\nuser = root\nstartsecs = 0\nautorestart = true\n' >> /etc/supervisor/conf.d/supervisord.conf
+        elif [ $MISP_BASEURL = "http://instance-e.misp.localhost" ]; then
+            echo -e '\n[program:configuration]\ncommand=command=socat TCP-LISTEN:12000,fork TCP:127.0.0.1:80\nuser = root\nstartsecs = 0\nautorestart = true\n' >> /etc/supervisor/conf.d/supervisord.conf
+        fi
+
+        echo -e '\n[program:proxy]\ncommand=/bin/bash -c "python3 /configuration.py"\nuser = www-data\nstartsecs = 20\nautorestart = false\nstartretries = 1\n' >> /etc/supervisor/conf.d/supervisord.conf
         echo "Container started for the fist time. Setup might time a few minutes. Please wait..."
         echo "(Details are logged in /tmp/install.log)"
         export DEBIAN_FRONTEND=noninteractive

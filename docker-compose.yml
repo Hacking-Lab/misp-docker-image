@@ -12,7 +12,10 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
     networks:
-      - external
+      - traefik
+      - internal-instance-A
+      - internal-instance-B
+      - internal-instance-E
     ports:
       - "80:80"
       - "8080:8080"
@@ -46,8 +49,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
-      - "traefik.http.routers.misp-a.service=misp-a"
-      - "traefik.http.services.misp-a.loadbalancer.server.port=80"
+      - "traefik.http.services.misp-a.loadbalancer.server.port=10000"
 
   misp-instance-B:
     image: hackinglab/misp
@@ -76,8 +78,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
-      - "traefik.http.routers.misp-b.service=misp-b"
-      - "traefik.http.services.misp-b.loadbalancer.server.port=80"
+      - "traefik.http.services.misp-b.loadbalancer.server.port=11000"
 
   misp-instance-E:
     image: hackinglab/misp
@@ -106,8 +107,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-e.rule=Host(`instance-e.misp.localhost`)"
-      - "traefik.http.routers.misp-e.service=misp-e"
-      - "traefik.http.services.misp-e.loadbalancer.server.port=80"
+      - "traefik.http.services.misp-e.loadbalancer.server.port=12000"
 
   database-instance-A:
     image: mysql/mysql-server:5.7
@@ -154,6 +154,9 @@ services:
 networks:
   external:
     name: external-network
+    driver: bridge
+  traefik:
+    name: traefik
     driver: bridge
   internal-instance-A:
     name: internal-instance-A
