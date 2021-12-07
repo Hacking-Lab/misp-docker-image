@@ -6,6 +6,7 @@ on:
       - dev
     paths:
       - misp/**  
+      - data-shared/**
 
 env:
   dockerhub_image_name: misp
