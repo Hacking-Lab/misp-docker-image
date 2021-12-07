@@ -11,28 +11,68 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+    #  - "--providers.docker.network=test"
+      - "--pilot.token=9de42a69-0fec-42b2-a952-da3187d9381c"
+
     networks:
-      - traefik
+    #  - traefik
       - internal-instance-A
       - internal-instance-B
       - internal-instance-E
+      - cats
     ports:
       - "80:80"
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
+  # whoami:
+  #   # A container that exposes an API to show its IP address
+  #   image: mikesir87/cats:1.0
+  #   # We set a label to tell Traefik to assign a hostname to the new service
+  #   labels:
+  #    - "traefik.enable=true"
+  #    - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+
+
+
+  # whoami-a:
+  #   # A container that exposes an API to show its IP address
+  #   image: containous/whoami
+  #   # We set a label to tell Traefik to assign a hostname to the new service
+  #   labels:
+  #    - "traefik.enable=true"
+  #    - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
+  #    - "traefik.http.routers.misp-a.entrypoints=web" 
+  #   #networks:
+  #   # - external
+  #    - internal-instance-A
+    
+
+  cats:
+    # A container that exposes an API to show its IP address
+    image: mikesir87/cats:1.0
+    # We set a label to tell Traefik to assign a hostname to the new service
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.cats.rule=Host(`cats.misp.localhost`)"
+     - "traefik.http.routers.cats.middlewares=test-errorpages"
+     - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
+     - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
+     - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+    networks:
+     #- external
+     - cats
+  
+
   misp-instance-A:
-    image: hackinglab/misp
+    image: hackinglab/misp:dev
     container_name: misp-instance-A
     restart: unless-stopped
     depends_on:
       - database-instance-A
     networks:
-      - external
       - internal-instance-A
-    ports: 
-      - "10000:80"
     volumes:
       - ./data-instance-A/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
@@ -49,19 +89,35 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
-      - "traefik.http.services.misp-a.loadbalancer.server.port=10000"
+      - "traefik.http.routers.misp-a.middlewares=test-errorpages"
+      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+
+  errorservice:
+    # image: guillaumebriday/traefik-custom-error-pages
+    build: 
+      context: ./misp/traefik-custom-error-pages
+    networks:
+      - internal-instance-A
+      - internal-instance-B
+      - internal-instance-E
+      - cats
+    labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.error.rule=Host(`error.localhost`)"
+          - "traefik.http.routers.error.service=errorservice"
+          - "traefik.http.services.errorservice.loadbalancer.server.port=80"
+          - "traefik.http.routers.error.entrypoints=web"    
 
   misp-instance-B:
-    image: hackinglab/misp
+    image: hackinglab/misp:dev
     container_name: misp-instance-B
     restart: unless-stopped
     depends_on:
       - database-instance-B
     networks:
-      - external
       - internal-instance-B
-    ports: 
-      - "11000:80"
     volumes:
       - ./data-instance-B/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
@@ -78,19 +134,20 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
-      - "traefik.http.services.misp-b.loadbalancer.server.port=11000"
+      - "traefik.http.routers.misp-b.middlewares=test-errorpages"
+      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+
 
   misp-instance-E:
-    image: hackinglab/misp
+    image: hackinglab/misp:dev
     container_name: misp-instance-E
     restart: unless-stopped
     depends_on:
       - database-instance-E
     networks:
-      - external
       - internal-instance-E
-    ports: 
-      - "12000:80"
     volumes:
       - ./data-instance-E/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
@@ -107,7 +164,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.misp-e.rule=Host(`instance-e.misp.localhost`)"
-      - "traefik.http.services.misp-e.loadbalancer.server.port=12000"
+      - "traefik.http.routers.misp-e.middlewares=test-errorpages"
+      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+
 
   database-instance-A:
     image: mysql/mysql-server:5.7
@@ -152,21 +213,25 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 networks:
-  external:
-    name: external-network
-    driver: bridge
+  #external:
+  #  name: external-network
+  #  driver: bridge
   traefik:
     name: traefik
     driver: bridge
   internal-instance-A:
     name: internal-instance-A
     driver: bridge
-    internal: true
+    internal: false
   internal-instance-B:
     name: internal-instance-B
     driver: bridge
-    internal: true
+    internal: false
   internal-instance-E:
     name: internal-instance-E
     driver: bridge
-    internal: true
+    internal: false
+  cats:
+    name: cats
+    driver: bridge
+    internal: false

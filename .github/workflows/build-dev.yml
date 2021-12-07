@@ -2,9 +2,11 @@ name: Build and publish dev Docker image to hub.docker.com
 
 on:
   push:
-    branches: [dev]
+    branches: 
+      - dev
     paths:
-      - 'misp/*'  
+      - misp/**  
+      - data-shared/**
 
 env:
   dockerhub_image_name: misp

@@ -1,3 +1,4 @@
+import requests
 from pymisp import PyMISP
 import time
 import subprocess
@@ -9,19 +10,24 @@ misp_url = "http://localhost/"
 misp_verifycert = False
 
 
-def getApiKey(email):
-    subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey "+ email +" | sed '1d'")
-    misp_key = subprocess.getoutput("/var/www/MISP/app/Console/cake user change_authkey "+ email +" | cut -d ':' -f 2 | cut -d ' ' -f 2")
+def get_vital_signs():
+    r = requests.get('http://localhost/users/login')
+
+
+def get_api_key(email):
+    subprocess.getoutput("/var/www/MISP/app/Console/cake Admin change_authkey " + email + " | sed '1d'")
+    misp_key = subprocess.getoutput(
+        "/var/www/MISP/app/Console/cake user change_authkey " + email + " | cut -d ':' -f 2 | cut -d ' ' -f 2")
     return misp_key
 
 
-def adminApiSession(misp_key):
+def new_admin_api(misp_key):
     global misp
     misp = PyMISP(misp_url, misp_key, misp_verifycert)
 
 
 # Setup server
-def updateInstance():
+def update_instance():
     misp.update_object_templates()
     misp.update_galaxies()
     misp.update_taxonomies()
@@ -29,27 +35,26 @@ def updateInstance():
     misp.update_warninglists()
 
 
-def setServerSettings():
+def set_server_settings():
     misp.set_server_setting("Security.password_policy_length", 7, True)
     misp.set_server_setting("Security.password_policy_complexity", "/(a-z)*/", True)
     misp.set_server_setting("MISP.main_logo", "logo.png", True)
     misp.set_server_setting("MISP.welcome_text_top", "Welcome to Malware Information Sharing Platform ", True)
 
-if not os.path.isfile("/var/tmp/first-configuration"):
-    raise Exception('The MISP Instance is already configured')
 
 x = True
 while x:
     try:
         time.sleep(10)
-        misp_key = getApiKey('admin@admin.test')
-        adminApiSession(misp_key)
+        get_vital_signs()
+        misp_key = get_api_key('admin@admin.test')
+        new_admin_api(misp_key)
         x = False
     except:
         x = True
 
-updateInstance()
-setServerSettings()
+update_instance()
+set_server_settings()
 
 # --------------------  LAB CONFIGURATION  -------------------- #
 
@@ -86,35 +91,31 @@ lab5.add_user(Role.investigator)
 lab5.import_events(lab5.get_admin())
 
 # Lab 6: Synchronisation
-# TODO: Implement if else statement for Lab instance
-if os.environ['MISP_BASEURL'] == "http://instance-a.misp.localhost":
-    lab6_a = Lab(6, misp, "A")
-    lab6_a.add_org('lab6-org-A')
-    lab6_a.add_user(Role.org_admin, 'lab6-org-A')
-    lab6_a.add_user(Role.publisher, 'lab6-org-A')
-    lab6_a.add_user(Role.investigator, 'lab6-org-A')
-    lab6_a.import_events(lab6_a.get_admin())
+lab6_a = Lab(6, misp, "A")
+lab6_a.add_org('lab6-org-A')
+lab6_a.add_user(Role.org_admin, 'lab6-org-A')
+lab6_a.add_user(Role.publisher, 'lab6-org-A')
+lab6_a.add_user(Role.investigator, 'lab6-org-A')
+lab6_a.import_events(lab6_a.get_admin())
 
-if os.environ['MISP_BASEURL'] == "http://instance-b.misp.localhost":
-    lab6_b = Lab(6, misp, "B")
-    lab6_b.add_org('lab6-org-B')
-    lab6_b.add_user(Role.org_admin, 'lab6-org-B')
-    lab6_b.add_user(Role.publisher, 'lab6-org-B')
-    lab6_b.add_user(Role.investigator, 'lab6-org-B')
-    lab6_b.add_org('lab6-org-F')
-    lab6_b.add_user(Role.org_admin, 'lab6-org-F')
-    lab6_b.add_user(Role.publisher, 'lab6-org-F')
-    lab6_b.add_user(Role.investigator, 'lab6-org-F')
-    lab6_b.add_user(Role.sync_user, 'lab6-org-F')
+lab6_b = Lab(6, misp, "B")
+lab6_b.add_org('lab6-org-B')
+lab6_b.add_user(Role.org_admin, 'lab6-org-B')
+lab6_b.add_user(Role.publisher, 'lab6-org-B')
+lab6_b.add_user(Role.investigator, 'lab6-org-B')
+lab6_b.add_org('lab6-org-F')
+lab6_b.add_user(Role.org_admin, 'lab6-org-F')
+lab6_b.add_user(Role.publisher, 'lab6-org-F')
+lab6_b.add_user(Role.investigator, 'lab6-org-F')
+lab6_b.add_user(Role.sync_user, 'lab6-org-F')
 
-if os.environ['MISP_BASEURL'] == "http://instance-e.misp.localhost":
-    lab6_e = Lab(6, misp, "E")
-    lab6_e.add_org('lab6-org-E')
-    lab6_e.add_user(Role.admin, 'lab6-org-E')
-    lab6_e.add_user(Role.investigator, 'lab6-org-E')
-    # TODO: Refactor this part
-    lab6_e.add_org('PLEASE-REPLACE-ME', False)
-    lab6_e.add_sync_server('Instance-B', 'http://misp-instance-B', 4)
+lab6_e = Lab(6, misp, "E")
+lab6_e.add_org('lab6-org-E')
+lab6_e.add_user(Role.org_admin, 'lab6-org-E')
+lab6_e.add_user(Role.investigator, 'lab6-org-E')
+# TODO: Refactor this part
+lab6_e.add_org('PLEASE-REPLACE-ME', False)
+lab6_e.add_sync_server('Instance-B', 'http://misp-instance-B', 3)
 
 # Lab 7: MISP Modules
 lab7 = Lab(7, misp)
