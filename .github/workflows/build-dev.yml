@@ -1,0 +1,42 @@
+name: Build and publish dev Docker image to hub.docker.com
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'misp/*'  
+
+env:
+  dockerhub_image_name: misp
+  dockerhub_repository_name: hackinglab
+  dockerhub_username: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_USERNAME }}
+  dockerhub_token: ${{ secrets.DOCKER_HUB_CI_CD_PIPELINE_MISP_API_KEY }}
+
+jobs:
+  build_and_push_to_dockerhub:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ env.dockerhub_username }}
+          password: ${{ env.dockerhub_token }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.dockerhub_username }}/${{ env.dockerhub_image_name }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./misp/.
+          push: true
+          tags: ${{ env.dockerhub_repository_name }}/${{ env.dockerhub_image_name }}:dev
+          labels: ${{ steps.meta.outputs.labels }}
