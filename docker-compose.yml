@@ -59,7 +59,7 @@ services:
      - "traefik.http.routers.cats.middlewares=test-errorpages"
      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
-     - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
+     - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
     networks:
      #- external
      - cats
@@ -92,7 +92,7 @@ services:
       - "traefik.http.routers.misp-a.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
-      - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
 
   errorservice:
     # image: guillaumebriday/traefik-custom-error-pages
@@ -137,7 +137,7 @@ services:
       - "traefik.http.routers.misp-b.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
-      - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
 
 
   misp-instance-E:
@@ -167,7 +167,7 @@ services:
       - "traefik.http.routers.misp-e.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
-      - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
 
 
   database-instance-A:
