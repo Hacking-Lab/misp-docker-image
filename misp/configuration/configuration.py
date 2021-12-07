@@ -115,7 +115,7 @@ lab6_e.add_user(Role.org_admin, 'lab6-org-E')
 lab6_e.add_user(Role.investigator, 'lab6-org-E')
 # TODO: Refactor this part
 lab6_e.add_org('PLEASE-REPLACE-ME', False)
-lab6_e.add_sync_server('Instance-B', 'http://misp-instance-B', 4)
+lab6_e.add_sync_server('Instance-B', 'http://misp-instance-B', 3)
 
 # Lab 7: MISP Modules
 lab7 = Lab(7, misp)

@@ -151,8 +151,6 @@ class Lab:
         self.__api.set_server_setting("Plugin.Enrichment_macvendors_restrict", 11, True)
         self.__api.set_server_setting("Plugin.Enrichment_qrcode_enabled", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_qrcode_restrict", 11, True)
-        self.__api.set_server_setting("Plugin.Enrichment_services_enable", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_services_restrict", 11, True)
         self.__api.set_server_setting("Plugin.Enrichment_urlhaus_enabled", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 11, True)
 
