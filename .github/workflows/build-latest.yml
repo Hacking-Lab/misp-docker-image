@@ -2,9 +2,11 @@ name: Build and publish latest Docker image to hub.docker.com
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
-      - 'misp/*'  
+      - misp/**
+      - data-shared/**
 
 env:
   dockerhub_image_name: misp
