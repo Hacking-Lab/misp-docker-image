@@ -1,4 +1,4 @@
-name: Build and publish Docker image to hub.docker.com
+name: Build and publish latest Docker image to hub.docker.com
 
 on:
   push:
