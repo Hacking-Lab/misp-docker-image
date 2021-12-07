@@ -79,7 +79,6 @@ RUN chmod 0755 /run.sh && touch /.firstboot.tmp
 WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
 
-
 # Configuration folder
 ADD configuration/ /
 RUN chmod 0755 /configuration.py
