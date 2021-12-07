@@ -25,7 +25,7 @@ class Lab:
         :return: If it is equal or not
         :rtype: bool
         """
-        if self.__instance == str(os.environ['MISP_BASEURL'])[17].upper():
+        if self.__instance == str(os.environ['MISP_BASEURL'])[16].upper():
             return True
 
     def add_user(self, role: Role, org_name: str = None):
