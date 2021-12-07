@@ -38,7 +38,7 @@ services:
           - "traefik.http.routers.error.entrypoints=web"    
 
   misp-instance-A:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp
     container_name: misp-instance-A
     restart: unless-stopped
     depends_on:
@@ -68,7 +68,7 @@ services:
 
 
   misp-instance-B:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp
     container_name: misp-instance-B
     restart: unless-stopped
     depends_on:
@@ -98,7 +98,7 @@ services:
 
 
   misp-instance-E:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp
     container_name: misp-instance-E
     restart: unless-stopped
     depends_on:
