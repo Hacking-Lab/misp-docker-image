@@ -6,12 +6,11 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
-      - "--log.level=DEBUG"
+      - "--log.level=INFO"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      - "--pilot.token=9de42a69-0fec-42b2-a952-da3187d9381c"
 
     networks:
       - internal-instance-A
