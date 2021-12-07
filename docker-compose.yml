@@ -58,7 +58,7 @@ services:
      - "traefik.http.routers.cats.rule=Host(`cats.misp.localhost`)"
      - "traefik.http.routers.cats.middlewares=test-errorpages"
      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
-     - "traefik.http.middlewares.test-errorpages.errors.service=errorService"
+     - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
      - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
     networks:
      #- external
@@ -91,13 +91,13 @@ services:
       - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
       - "traefik.http.routers.misp-a.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
-      - "traefik.http.middlewares.test-errorpages.errors.service=errorService"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
       - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
 
-  errorService:
+  errorservice:
     # image: guillaumebriday/traefik-custom-error-pages
     build: 
-      context: ./traefik-custom-error-pages
+      context: ./misp/traefik-custom-error-pages
     networks:
       - internal-instance-A
       - internal-instance-B
@@ -106,8 +106,8 @@ services:
     labels:
           - "traefik.enable=true"
           - "traefik.http.routers.error.rule=Host(`error.localhost`)"
-          - "traefik.http.routers.error.service=errorService"
-          - "traefik.http.services.errorService.loadbalancer.server.port=80"
+          - "traefik.http.routers.error.service=errorservice"
+          - "traefik.http.services.errorservice.loadbalancer.server.port=80"
           - "traefik.http.routers.error.entrypoints=web"    
 
   misp-instance-B:
@@ -136,7 +136,7 @@ services:
       - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
       - "traefik.http.routers.misp-b.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
-      - "traefik.http.middlewares.test-errorpages.errors.service=errorService"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
       - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
 
 
@@ -166,7 +166,7 @@ services:
       - "traefik.http.routers.misp-e.rule=Host(`instance-e.misp.localhost`)"
       - "traefik.http.routers.misp-e.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
-      - "traefik.http.middlewares.test-errorpages.errors.service=errorService"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
       - "traefik.http.middlewares.test-errorpages.errors.query=/{status}.html"
 
 
