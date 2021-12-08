@@ -6,12 +6,11 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
-      - "--log.level=DEBUG"
+      - "--log.level=FATAL"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      - "--pilot.token=9de42a69-0fec-42b2-a952-da3187d9381c"
 
     networks:
       - internal-instance-A
@@ -38,7 +37,7 @@ services:
           - "traefik.http.routers.error.entrypoints=web"    
 
   misp-instance-A:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp:latest
     container_name: misp-instance-A
     restart: unless-stopped
     depends_on:
@@ -68,7 +67,7 @@ services:
 
 
   misp-instance-B:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp:latest
     container_name: misp-instance-B
     restart: unless-stopped
     depends_on:
@@ -98,7 +97,7 @@ services:
 
 
   misp-instance-E:
-    image: hackinglab/misp:dev
+    image: hackinglab/misp:latest
     container_name: misp-instance-E
     restart: unless-stopped
     depends_on:
@@ -182,3 +181,4 @@ networks:
     name: internal-instance-E
     driver: bridge
     internal: false
+    
