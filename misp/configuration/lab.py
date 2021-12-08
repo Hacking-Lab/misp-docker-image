@@ -3,13 +3,14 @@ import os
 import subprocess
 import uuid
 from role import Role
+from instance import Instance
 from pymisp import MISPUser, MISPOrganisation, PyMISP
 
 
 class Lab:
     default_password = 'compass'
 
-    def __init__(self, lab_nr: int, api: PyMISP, instance: str = 'A'):
+    def __init__(self, lab_nr: int, api: PyMISP, instance: Instance = Instance.all):
         self.__lab_nr = lab_nr
         self.__api = api
         self.__instance = instance
@@ -17,7 +18,7 @@ class Lab:
         self.__admins = []
         self.__orgs = {}
         self.__server_settings = ()
-        self.__correct_instance = self.check_instance()
+        self.__run_on_this_instance = self.check_instance()
 
     def check_instance(self):
         """
@@ -26,6 +27,8 @@ class Lab:
         :rtype: bool
         """
         if self.__instance == str(os.environ['MISP_BASEURL'])[16].upper():
+            return True
+        elif self.__instance == Instance.all:
             return True
 
     def add_user(self, role: Role, org_name: str = None):
@@ -36,7 +39,7 @@ class Lab:
         :type org_name: str or None
         :return:
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         if org_name is None:
             org_name = "lab" + str(self.__lab_nr)
@@ -85,7 +88,7 @@ class Lab:
         :param local: If org is a local
         :type local: bool or None
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         if org_name is None:
             org_name = "lab" + str(self.__lab_nr)
@@ -101,7 +104,7 @@ class Lab:
         Import new events from file system
         :param MISPUser user: The user that will create the event in MISP
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         if not hasattr(user, 'api_key'):
             return
@@ -137,7 +140,7 @@ class Lab:
         Import new server configuration from file system
         """
         # TODO: Import events from fs
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         self.__api.set_server_setting("Plugin.Enrichment_services_enable", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_hover_enable", True, True)
@@ -161,7 +164,7 @@ class Lab:
         :return: Org name and id
         :rtype: dict
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         return self.__orgs[pos]
 
@@ -172,7 +175,7 @@ class Lab:
         :return: Administrator
         :rtype: MISPUser
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         return self.__admins[pos]
 
@@ -183,7 +186,7 @@ class Lab:
         :param url: url to the remote server
         :param int remote_org_id: id of the remote org
         """
-        if not self.__correct_instance:
+        if not self.__run_on_this_instance:
             return
         server = {"Server": {'name': name, 'url': url, 'uuid': '0ac33559-ad37-4147-b61d-95df6ab76920', 'authkey': "aaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 'self_signed': 'True', 'pull': True, 'remote_org_id': remote_org_id}}
         self.__api.add_server(server)
