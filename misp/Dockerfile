@@ -67,6 +67,12 @@ RUN ( \
     echo 'user = www-data'; \
     echo 'startsecs = 0'; \
     echo 'autorestart = false'; \
+    echo ''; \
+    echo '[program:configuration]'; \
+    echo 'command=/bin/bash -c "python3 /configuration.py"'; \
+    echo 'user = www-data'; \
+    echo 'startsecs = 20'; \
+    echo 'autorestart = false'; \
     ) >> /etc/supervisor/conf.d/supervisord.conf
 
 # Add run script
