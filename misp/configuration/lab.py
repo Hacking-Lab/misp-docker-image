@@ -26,7 +26,7 @@ class Lab:
         :return: If it is equal or not
         :rtype: bool
         """
-        if self.__instance == str(os.environ['MISP_BASEURL'])[16].upper():
+        if self.__instance.name == str(os.environ['MISP_BASEURL'])[16].upper():
             return True
         elif self.__instance == Instance.all:
             return True
