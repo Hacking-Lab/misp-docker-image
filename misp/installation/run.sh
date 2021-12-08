@@ -14,8 +14,6 @@ set -e
 
 if [ -r /.firstboot.tmp ]; then
         sed -i "3i loglevel = debug" /etc/supervisor/conf.d/supervisord.conf
-
-        echo -e '\n[program:proxy]\ncommand=/bin/bash -c "python3 /configuration.py"\nuser = www-data\nstartsecs = 20\nautorestart = false\nstartretries = 1\n' >> /etc/supervisor/conf.d/supervisord.conf
         echo "Container started for the fist time. Setup might time a few minutes. Please wait..."
         echo "(Details are logged in /tmp/install.log)"
         export DEBIAN_FRONTEND=noninteractive
