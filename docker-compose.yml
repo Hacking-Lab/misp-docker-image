@@ -13,6 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
 
     networks:
+      - internal-instance-default
       - internal-instance-A
       - internal-instance-B
       - internal-instance-E
@@ -26,6 +27,7 @@ services:
     build: 
       context: ./misp/traefik-custom-error-pages
     networks:
+      - internal-instance-default
       - internal-instance-A
       - internal-instance-B
       - internal-instance-E
@@ -36,6 +38,35 @@ services:
           - "traefik.http.services.errorservice.loadbalancer.server.port=80"
           - "traefik.http.routers.error.entrypoints=web"    
 
+  misp-instance-default:
+    image: hackinglab/misp:latest
+    container_name: misp-instance-default
+    restart: unless-stopped
+    depends_on:
+      - database-instance-default
+    networks:
+      - internal-instance-default
+    volumes:
+      - ./data-instance-default/misp:/var/www/MISP:rw
+      - ./data-shared:/data-shared:rw
+    environment:
+      - MYSQL_HOST=database-instance-default
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
+      - MISP_BASEURL=http://misp.localhost
+      - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
+      - TIMEZONE=${TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.misp-default.rule=Host(`misp.localhost`)"
+      - "traefik.http.routers.misp-default.middlewares=test-errorpages"
+      - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
+      - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
+      - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+      
   misp-instance-A:
     image: hackinglab/misp:latest
     container_name: misp-instance-A
@@ -126,6 +157,20 @@ services:
       - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
 
 
+  database-instance-default:
+    image: mysql/mysql-server:5.7
+    container_name: database-instance-default
+    restart: unless-stopped
+    networks:
+      - internal-instance-default
+    volumes:
+      - ./data-instance-default/database:/var/lib/mysql:rw
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  
   database-instance-A:
     image: mysql/mysql-server:5.7
     container_name: database-instance-A
@@ -169,6 +214,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 networks:
+  internal-instance-default:
+    name: internal-instance-default
+    driver: bridge
+    internal: false
   internal-instance-A:
     name: internal-instance-A
     driver: bridge
