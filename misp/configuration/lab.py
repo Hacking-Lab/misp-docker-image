@@ -79,7 +79,7 @@ class Lab:
         elif self.__instance is None:
             return role.name + "-org-" + org + "@misp-lab" + str(self.__lab_nr) + ".com"
         else:
-            return role.name + "-org-" + org + "@instance-" + self.__instance + ".misp-lab" + str(
+            return role.name + "-org-" + org + "@instance-" + self.__instance.name + ".misp-lab" + str(
                 self.__lab_nr) + ".com"
 
     def add_org(self, org_name: str = None, local: bool = True):
