@@ -153,17 +153,17 @@ class Lab:
         self.__api.set_server_setting("Plugin.Enrichment_services_enable", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_hover_enable", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_geoip_city_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_geoip_city_local_geolite_db", "/data-shared/geolite/city.mmdb",
                                       True)
         self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_macvendors_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_macvendors_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_macvendors_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_qrcode_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_qrcode_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_qrcode_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_urlhaus_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 6, True)
 
     def get_org(self, pos: int = 0):
         """
