@@ -32,7 +32,7 @@ class Lab:
         elif self.__instance == Instance.all:
             return True
 
-    def add_user(self, role: Role, org_name: str = None, mail_format: MailFormat = MailFormat.default):
+    def add_user(self, role: Role, mail_format: MailFormat = MailFormat.default, org_name: str = None):
         """
         Adds a user to MISP
         :param Role role: Role of the new user
