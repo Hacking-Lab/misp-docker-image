@@ -6,5 +6,5 @@ class Role(Enum):
     org_admin = auto()
     investigator = auto()
     publisher = auto()
-    sync_user = auto()
+    sync = auto()
     automation_user = auto()
