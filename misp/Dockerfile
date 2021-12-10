@@ -86,13 +86,13 @@ WORKDIR /var/www/MISP
 RUN tar czpf /root/MISP.tgz .
 
 # Install MISP Modules
-RUN sudo apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev build-essential -y
-RUN sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
-RUN cd /usr/local/src/
-RUN sudo chown -R www-data: .
-RUN cd /var/www/MISP/venv/
-RUN sudo pip install -I -r requirements.txt
-RUN sudo pip install .
+#RUN sudo apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev build-essential -y
+#RUN sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
+#RUN cd /usr/local/src/
+#RUN sudo chown -R www-data: .
+#RUN cd /var/www/MISP/venv/
+#RUN sudo pip install -I -r requirements.txt
+#RUN sudo pip install .
 
 
 # Configuration folder
