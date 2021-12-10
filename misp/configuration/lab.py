@@ -86,7 +86,7 @@ class Lab:
             return role.name + "@instance-" + self.__instance.name.lower() + ".misp-lab" + str(self.__lab_nr) + ".com"
         # <role>-org-X@instance-X.misp-labX.com
         else:
-            role.name + "-org-" + org.lower() + "@instance-" + self.__instance.name + ".misp-lab" + str(self.__lab_nr) + ".com"
+            return role.name + "-org-" + org.lower() + "@instance-" + self.__instance.name + ".misp-lab" + str(self.__lab_nr) + ".com"
 
     def add_org(self, org_name: str = None, local: bool = True):
         """
