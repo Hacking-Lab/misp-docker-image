@@ -27,11 +27,9 @@ class Lab:
         :return: If it is equal or not
         :rtype: bool
         """
-        if self.__instance.name == str(os.environ['MISP_BASEURL'])[16].upper():
+        if self.__instance.name == str(os.environ['INSTANCE_TAG']):
             return True
         elif self.__instance == Instance.all:
-            return True
-        elif self.__instance == Instance.default and len(str(os.environ['MISP_BASEURL'])) < 30:
             return True
 
     def add_user(self, role: Role, org_name: str = None, mail_format: MailFormat = MailFormat.default):

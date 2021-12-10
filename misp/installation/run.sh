@@ -98,7 +98,24 @@ if [ -r /.firstboot.tmp ]; then
         sed -i "s/8889/3306/" database.php
         sed -i "s/db\s*password/$MYSQL_PASSWORD/" database.php
 
-        # Fix the base url
+        # Set the base url
+        case $INSTANCE_TAG in
+          default)
+            MISP_BASEURL="http://misp.localhost"
+            ;;
+          A)
+            MISP_BASEURL="http://instance-a.misp.localhost"
+            ;;
+          B)
+            MISP_BASEURL="http://instance-b.misp.localhost"
+            ;;
+          E)
+            MISP_BASEURL="http://instance-e.misp.localhost"
+            ;;
+          *)
+            echo "Error - the set instance tag is wrong!"
+            ;;
+        esac
         /var/www/MISP/app/Console/cake Baseurl $MISP_BASEURL
 		
 		#Redis should not run as a daemon
