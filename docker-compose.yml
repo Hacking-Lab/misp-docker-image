@@ -13,6 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
 
     networks:
+      - internal-all-instances
       - internal-instance-default
       - internal-instance-A
       - internal-instance-B
@@ -27,6 +28,7 @@ services:
     build: 
       context: ./misp/traefik-custom-error-pages
     networks:
+      - internal-all-instances
       - internal-instance-default
       - internal-instance-A
       - internal-instance-B
@@ -45,6 +47,7 @@ services:
     depends_on:
       - database-instance-default
     networks:
+      - internal-all-instances
       - internal-instance-default
     volumes:
       - ./data-instance-default/misp:/var/www/MISP:rw
@@ -74,6 +77,7 @@ services:
     depends_on:
       - database-instance-A
     networks:
+      - internal-all-instances
       - internal-instance-A
     volumes:
       - ./data-instance-A/misp:/var/www/MISP:rw
@@ -104,6 +108,7 @@ services:
     depends_on:
       - database-instance-B
     networks:
+      - internal-all-instances
       - internal-instance-B
     volumes:
       - ./data-instance-B/misp:/var/www/MISP:rw
@@ -134,6 +139,7 @@ services:
     depends_on:
       - database-instance-E
     networks:
+      - internal-all-instances
       - internal-instance-E
     volumes:
       - ./data-instance-E/misp:/var/www/MISP:rw
@@ -214,6 +220,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 networks:
+  internal-all-instances:
+    name: internal-all-instances
+    driver: bridge
+    internal: false
   internal-instance-default:
     name: internal-instance-default
     driver: bridge
