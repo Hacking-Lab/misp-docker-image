@@ -69,6 +69,8 @@ services:
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
       - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+    ports: 
+      - "10000:80"
       
   misp-instance-A:
     image: hackinglab/misp:latest

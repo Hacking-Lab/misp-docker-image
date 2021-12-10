@@ -9,8 +9,6 @@
       <!-- Fonts -->
       <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet" type="text/css">
 
-      <!-- Styles -->
-      <!-- <link rel="stylesheet" href="css/application.css"> -->
       <style>
         html {
   line-height: 1.15;
@@ -244,7 +242,7 @@ button,
 }
 
 .bg-purple-light {
-  background-color: #d63636;
+  background-color: rgb(212, 35, 35);
 }
 
 .bg-no-repeat {
@@ -421,6 +419,9 @@ button,
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
+      justify-content: center;
+    align-content: center;
+    align-items: center;
   }
 
   .md\:my-6 {
@@ -455,6 +456,45 @@ button,
   }
 }
 
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  margin: 16px;
+  border: 16px solid rgb(212, 35, 35);
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: rgb(212, 35, 35) transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+
       </style>
     </head>
 
@@ -469,13 +509,13 @@ button,
                     <div class="w-16 h-1 bg-purple-light my-3 md:my-6"></div>
 
                     <p class="text-grey-darker text-2xl md:text-3xl font-light mb-8 leading-normal">
-                      Hacking Lab not available yet. Please wait until the login screen is <strong>visible with the Hacking Lab Logo</strong>.
+                      MISP Lab not available yet. Please wait until the login screen is visible with the Hacking Lab Logo.
                     </p>
                 </div>
             </div>
 
             <div class="relative pb-full md:flex md:pb-0 md:min-h-screen w-full md:w-1/2">
-              <div style="background-image: url('img/logo.png')" class="absolute pin bg-cover bg-no-repeat md:bg-left lg:bg-center">
+              <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
               </div>
             </div>
         </div>
