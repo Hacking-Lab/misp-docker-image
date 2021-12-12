@@ -33,9 +33,9 @@ def update_instance():
     misp.update_object_templates()
     misp.update_galaxies()
     misp.update_taxonomies()
-    # misp.enable_taxonomy('tlp')
+    misp.enable_taxonomy(119)  # tlp
+    misp.enable_taxonomy_tags(119)
     misp.update_warninglists()
-
 
 def set_server_settings():
     misp.set_server_setting("Security.password_policy_length", 7, True)
