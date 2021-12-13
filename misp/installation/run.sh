@@ -98,21 +98,39 @@ if [ -r /.firstboot.tmp ]; then
         sed -i "s/8889/3306/" database.php
         sed -i "s/db\s*password/$MYSQL_PASSWORD/" database.php
 
-        # Fix the base url
+        # Set the base url
+        case $INSTANCE_TAG in
+          default)
+            MISP_BASEURL="http://misp.localhost"
+            ;;
+          A)
+            MISP_BASEURL="http://instance-a.misp.localhost"
+            ;;
+          B)
+            MISP_BASEURL="http://instance-b.misp.localhost"
+            ;;
+          E)
+            MISP_BASEURL="http://instance-e.misp.localhost"
+            ;;
+          *)
+            echo "Error - the set instance tag is wrong!"
+            ;;
+        esac
         /var/www/MISP/app/Console/cake Baseurl $MISP_BASEURL
 		
 		#Redis should not run as a daemon
 		sed -i "s/daemonize yes/daemonize no/g" /etc/redis/redis.conf
 
-        # Install MISP Modules
-        sudo apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev build-essential -y
-        sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
-        cd /usr/local/src/
-        sudo chown -R www-data: .
-        cd misp-modules
-        sudo -u www-data /var/www/MISP/venv/bin/pip install -I -r REQUIREMENTS
-        sudo -u www-data /var/www/MISP/venv/bin/pip install .
-
+    # Install MISP Modules
+    if [ "$INSTANCE_TAG" == "A" ]; then
+      sudo apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev build-essential -y
+      sudo -u www-data virtualenv -p python3 /var/www/MISP/venv
+      cd /usr/local/src/
+      sudo chown -R www-data: .
+      cd misp-modules
+      sudo -u www-data /var/www/MISP/venv/bin/pip install -I -r REQUIREMENTS
+      sudo -u www-data /var/www/MISP/venv/bin/pip install .
+    fi
 
 
         # Display tips

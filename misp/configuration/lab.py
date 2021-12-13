@@ -4,6 +4,7 @@ import subprocess
 import uuid
 from role import Role
 from instance import Instance
+from mail_format import MailFormat
 from pymisp import MISPUser, MISPOrganisation, PyMISP
 
 
@@ -26,20 +27,18 @@ class Lab:
         :return: If it is equal or not
         :rtype: bool
         """
-        if self.__instance.name == str(os.environ['MISP_BASEURL'])[16].upper():
+        if self.__instance.name == str(os.environ['INSTANCE_TAG']):
             return True
         elif self.__instance == Instance.all:
             return True
-        elif self.__instance == Instance.default and len(str(os.environ['MISP_BASEURL'])) < 30:
-            return True
 
-    def add_user(self, role: Role, org_name: str = None):
+    def add_user(self, role: Role, mail_format: MailFormat = MailFormat.default, org_name: str = None):
         """
         Adds a user to MISP
         :param Role role: Role of the new user
         :param org_name: Organisation of the new user
         :type org_name: str or None
-        :return:
+        :param MailFormat mail_format: The format of the generated email address
         """
         if not self.__run_on_this_instance:
             return
@@ -48,7 +47,7 @@ class Lab:
 
         if org_name in self.__orgs:
             user = MISPUser()
-            user.email = self.__gen_email(role, org_name[-1])
+            user.email = self.__gen_email(role, org_name[-1], mail_format)
             user.org_id = self.__orgs[org_name]
             user.role_id = role.value
             user.password = self.default_password
@@ -63,8 +62,7 @@ class Lab:
                     "/var/www/MISP/app/Console/cake user change_authkey " + result.email + " | cut -d ':' -f 2 | cut -d ' ' -f 2")
                 self.__admins.append(result)
 
-    # TODO: Lab 6 gets wrong names
-    def __gen_email(self, role: Role, org: str) -> str:
+    def __gen_email(self, role: Role, org: str, mail_format: MailFormat) -> str:
         """
         Generates the email address
         :param Role role: Role of the user
@@ -72,15 +70,21 @@ class Lab:
         :return: Valid email address
         :rtype: str
         """
-        if role.value == 1:
-            return role.name + "@misp-lab.com"
-        elif len(self.__orgs) == 1:
+        # <role>@misp-labX.com
+        if mail_format == MailFormat.default:
             return role.name + "@misp-lab" + str(self.__lab_nr) + ".com"
-        elif self.__instance is None:
-            return role.name + "-org-" + org + "@misp-lab" + str(self.__lab_nr) + ".com"
+        # <role>@misp-lab.com
+        elif mail_format == MailFormat.none:
+            return role.name + "@misp-lab.com"
+        # <role>-org-X@misp-labX.com
+        elif mail_format == MailFormat.org:
+            return role.name + "-org-" + org.lower() + "@misp-lab" + str(self.__lab_nr) + ".com"
+        # <role>@instance-X.misp-labX.com
+        elif mail_format == MailFormat.instance:
+            return role.name + "@instance-" + self.__instance.name.lower() + ".misp-lab" + str(self.__lab_nr) + ".com"
+        # <role>-org-X@instance-X.misp-labX.com
         else:
-            return role.name + "-org-" + org + "@instance-" + self.__instance.name + ".misp-lab" + str(
-                self.__lab_nr) + ".com"
+            return role.name + "-org-" + org.lower() + "@instance-" + self.__instance.name + ".misp-lab" + str(self.__lab_nr) + ".com"
 
     def add_org(self, org_name: str = None, local: bool = True):
         """
@@ -147,17 +151,17 @@ class Lab:
         self.__api.set_server_setting("Plugin.Enrichment_services_enable", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_hover_enable", True, True)
         self.__api.set_server_setting("Plugin.Enrichment_geoip_city_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_geoip_city_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_geoip_city_local_geolite_db", "/data-shared/geolite/city.mmdb",
                                       True)
         self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_btc_scam_check_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_macvendors_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_macvendors_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_macvendors_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_qrcode_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_qrcode_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_qrcode_restrict", 6, True)
         self.__api.set_server_setting("Plugin.Enrichment_urlhaus_enabled", True, True)
-        self.__api.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 11, True)
+        self.__api.set_server_setting("Plugin.Enrichment_urlhaus_restrict", 6, True)
 
     def get_org(self, pos: int = 0):
         """

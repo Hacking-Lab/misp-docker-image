@@ -13,6 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
 
     networks:
+      - internal-all-instances
       - internal-instance-default
       - internal-instance-A
       - internal-instance-B
@@ -27,6 +28,7 @@ services:
     build: 
       context: ./misp/traefik-custom-error-pages
     networks:
+      - internal-all-instances
       - internal-instance-default
       - internal-instance-A
       - internal-instance-B
@@ -45,27 +47,30 @@ services:
     depends_on:
       - database-instance-default
     networks:
+      - internal-all-instances
       - internal-instance-default
     volumes:
       - ./data-instance-default/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
     environment:
-      - MYSQL_HOST=database-instance-default
+      - MYSQL_HOST=${MYSQL_HOST_DEFAULT}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=http://misp.localhost
+      - INSTANCE_TAG=${INSTANCE_DEFAULT_TAG}
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp-default.rule=Host(`misp.localhost`)"
+      - "traefik.http.routers.misp-default.rule=Host(`${INSTANCE_DEFAULT_URL}`)"
       - "traefik.http.routers.misp-default.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
       - "traefik.http.middlewares.test-errorpages.errors.query=/inprogress.html"
+    ports: 
+      - "10000:80"
       
   misp-instance-A:
     image: hackinglab/misp:latest
@@ -74,23 +79,24 @@ services:
     depends_on:
       - database-instance-A
     networks:
+      - internal-all-instances
       - internal-instance-A
     volumes:
       - ./data-instance-A/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
     environment:
-      - MYSQL_HOST=database-instance-A
+      - MYSQL_HOST=${MYSQL_HOST_A}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=http://instance-a.misp.localhost
+      - INSTANCE_TAG=${INSTANCE_A_TAG}
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp-a.rule=Host(`instance-a.misp.localhost`)"
+      - "traefik.http.routers.misp-a.rule=Host(`${INSTANCE_A_URL}`)"
       - "traefik.http.routers.misp-a.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
@@ -104,23 +110,24 @@ services:
     depends_on:
       - database-instance-B
     networks:
+      - internal-all-instances
       - internal-instance-B
     volumes:
       - ./data-instance-B/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
     environment:
-      - MYSQL_HOST=database-instance-B
+      - MYSQL_HOST=${MYSQL_HOST_B}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=http://instance-b.misp.localhost
+      - INSTANCE_TAG=${INSTANCE_B_TAG}
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp-b.rule=Host(`instance-b.misp.localhost`)"
+      - "traefik.http.routers.misp-b.rule=Host(`${INSTANCE_B_URL}`)"
       - "traefik.http.routers.misp-b.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
@@ -134,23 +141,24 @@ services:
     depends_on:
       - database-instance-E
     networks:
+      - internal-all-instances
       - internal-instance-E
     volumes:
       - ./data-instance-E/misp:/var/www/MISP:rw
       - ./data-shared:/data-shared:rw
     environment:
-      - MYSQL_HOST=database-instance-E
+      - MYSQL_HOST=${MYSQL_HOST_E}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
-      - MISP_BASEURL=http://instance-e.misp.localhost
+      - INSTANCE_TAG=${INSTANCE_E_TAG}
       - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
       - TIMEZONE=${TIMEZONE}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp-e.rule=Host(`instance-e.misp.localhost`)"
+      - "traefik.http.routers.misp-e.rule=Host(`${INSTANCE_E_URL}`)"
       - "traefik.http.routers.misp-e.middlewares=test-errorpages"
       - "traefik.http.middlewares.test-errorpages.errors.status=500-599"
       - "traefik.http.middlewares.test-errorpages.errors.service=errorservice"
@@ -214,6 +222,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 networks:
+  internal-all-instances:
+    name: internal-all-instances
+    driver: bridge
+    internal: false
   internal-instance-default:
     name: internal-instance-default
     driver: bridge
