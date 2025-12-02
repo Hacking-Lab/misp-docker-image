@@ -38,7 +38,7 @@ The admin user is present on all instances.
 User: `admin@misp-lab.com`  
 Password: `compass`  
 
-The compass for all other users is also `compass`.
+The password for all other users is also `compass`.
 For example:
 User: `investigator@misp-labX.com`  
 Password: `compass`  
